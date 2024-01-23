@@ -1,6 +1,7 @@
 "use client";
 
 import SignIn from "@/components/SignIn";
+import SignUp from "@/components/SignUp";
 import {
 	Box,
 	Typography,
@@ -17,8 +18,10 @@ const darkTheme = createTheme({
 	},
 });
 
+export type AuthFormType = "SIGN_UP" | "SIGN_IN" | "FORGOT_PW";
+
 export default function Home() {
-	const [showSignIn, setShowSignIn] = useState<boolean>(false);
+	const [authFormType, setAuthFormType] = useState<AuthFormType>("SIGN_IN");
 
 	// useEffect(() => {
 	// 	fetch("http://localhost:8080/api/home")
@@ -32,7 +35,7 @@ export default function Home() {
 			<Container component="main" maxWidth="sm">
 				<Box
 					sx={{
-						marginTop: 8,
+						marginTop: "8px",
 						display: "flex",
 						flexDirection: "column",
 						alignItems: "center",
@@ -50,7 +53,12 @@ export default function Home() {
 							A job search tracker and insights tool
 						</Typography>
 					</Box>
-					<SignIn />
+					{authFormType === "SIGN_IN" && (
+						<SignIn setAuthFormType={setAuthFormType} />
+					)}
+					{authFormType === "SIGN_UP" && (
+						<SignUp setAuthFormType={setAuthFormType} />
+					)}
 				</Box>
 			</Container>
 		</ThemeProvider>

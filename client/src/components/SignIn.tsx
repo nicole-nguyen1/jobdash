@@ -1,3 +1,4 @@
+import { AuthFormType } from "@/app/page";
 import {
 	Box,
 	Typography,
@@ -9,9 +10,13 @@ import {
 	Link,
 	Card,
 } from "@mui/material";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 
-export default function SignIn() {
+type Props = {
+	setAuthFormType: Dispatch<SetStateAction<AuthFormType>>;
+};
+
+export default function SignIn({ setAuthFormType }: Props) {
 	return (
 		<Box
 			sx={{
@@ -59,12 +64,12 @@ export default function SignIn() {
 				</Button>
 				<Grid container>
 					<Grid item xs>
-						<Link onClick={() => {}} variant="body2">
+						<Link onClick={() => setAuthFormType("FORGOT_PW")} variant="body2">
 							Forgot password?
 						</Link>
 					</Grid>
 					<Grid item>
-						<Link onClick={() => {}} variant="body2">
+						<Link onClick={() => setAuthFormType("SIGN_UP")} variant="body2">
 							{"Don't have an account? Sign Up"}
 						</Link>
 					</Grid>
