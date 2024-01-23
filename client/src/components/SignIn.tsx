@@ -20,13 +20,13 @@ export default function SignIn({ setAuthFormType }: Props) {
 	return (
 		<Box
 			sx={{
-				marginTop: "8px",
+				marginTop: 4,
 				display: "flex",
 				flexDirection: "column",
 				alignItems: "center",
 			}}
 		>
-			<Typography variant="h6">Sign in</Typography>
+			<Typography variant="h5">Sign in</Typography>
 			<Box component="form" onSubmit={() => {}} noValidate sx={{ mt: 1 }}>
 				<TextField
 					margin="dense"
@@ -36,7 +36,6 @@ export default function SignIn({ setAuthFormType }: Props) {
 					label="Email Address"
 					name="email"
 					autoComplete="email"
-					autoFocus
 					size="small"
 				/>
 				<TextField

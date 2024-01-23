@@ -20,13 +20,13 @@ export default function SignUp({ setAuthFormType }: Props) {
 	return (
 		<Box
 			sx={{
-				marginTop: "8px",
+				marginTop: 4,
 				display: "flex",
 				flexDirection: "column",
 				alignItems: "center",
 			}}
 		>
-			<Typography variant="h6">Sign up</Typography>
+			<Typography variant="h5">Sign up</Typography>
 			<Box component="form" noValidate onSubmit={() => {}} sx={{ mt: 1 }}>
 				<Grid container spacing={2}>
 					<Grid item xs={12} sm={6}>
@@ -37,7 +37,6 @@ export default function SignUp({ setAuthFormType }: Props) {
 							fullWidth
 							id="firstName"
 							label="First Name"
-							autoFocus
 							size="small"
 						/>
 					</Grid>

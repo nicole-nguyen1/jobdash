@@ -49,7 +49,7 @@ export default function Home() {
 					}}
 				>
 					<Box sx={{ textAlign: "center" }}>
-						<Typography variant="h3">JobDash</Typography>
+						<Typography variant="h1">JobDash</Typography>
 						<Typography variant="subtitle1">
 							A job search tracker and insights tool
 						</Typography>
