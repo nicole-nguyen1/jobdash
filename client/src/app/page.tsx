@@ -1,5 +1,6 @@
 "use client";
 
+import ForgotPassword from "@/components/ForgotPassword";
 import SignIn from "@/components/SignIn";
 import SignUp from "@/components/SignUp";
 import {
@@ -35,7 +36,7 @@ export default function Home() {
 			<Container component="main" maxWidth="sm">
 				<Box
 					sx={{
-						marginTop: "8px",
+						marginTop: 8,
 						display: "flex",
 						flexDirection: "column",
 						alignItems: "center",
@@ -58,6 +59,9 @@ export default function Home() {
 					)}
 					{authFormType === "SIGN_UP" && (
 						<SignUp setAuthFormType={setAuthFormType} />
+					)}
+					{authFormType === "FORGOT_PW" && (
+						<ForgotPassword setAuthFormType={setAuthFormType} />
 					)}
 				</Box>
 			</Container>
