@@ -16,15 +16,15 @@ def get_db_connection():
 
 @app.route("/api/home", methods=['GET'])
 def home():
-  conn = get_db_connection()
-  cur = conn.cursor()
-  cur.execute('SELECT * FROM books;')
-  books = cur.fetchall()
-  cur.close()
-  conn.close()
+  # conn = get_db_connection()
+  # cur = conn.cursor()
+  # cur.execute('SELECT * FROM books;')
+  # books = cur.fetchall()
+  # cur.close()
+  # conn.close()
   return jsonify({
     'message': 'Hello world!',
-    'books': books
+    # 'books': books
   })
 
 # run app in dev
