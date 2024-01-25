@@ -23,6 +23,7 @@ export type AuthFormType = "SIGN_UP" | "SIGN_IN" | "FORGOT_PW";
 
 export default function Home() {
 	const [authFormType, setAuthFormType] = useState<AuthFormType>("SIGN_IN");
+	const [email, setEmail] = useState<string>("");
 
 	// useEffect(() => {
 	// 	fetch("http://localhost:8080/api/home")
@@ -55,13 +56,13 @@ export default function Home() {
 						</Typography>
 					</Box>
 					{authFormType === "SIGN_IN" && (
-						<SignIn setAuthFormType={setAuthFormType} />
+						<SignIn setAuthFormType={setAuthFormType} setEmail={setEmail} />
 					)}
 					{authFormType === "SIGN_UP" && (
 						<SignUp setAuthFormType={setAuthFormType} />
 					)}
 					{authFormType === "FORGOT_PW" && (
-						<ForgotPassword setAuthFormType={setAuthFormType} />
+						<ForgotPassword setAuthFormType={setAuthFormType} email={email} />
 					)}
 				</Box>
 			</Container>

@@ -11,12 +11,31 @@ import {
 	Card,
 } from "@mui/material";
 import React, { Dispatch, SetStateAction } from "react";
+import { useForm } from "react-hook-form";
+import validator from "validator";
 
 type Props = {
 	setAuthFormType: Dispatch<SetStateAction<AuthFormType>>;
+	setEmail: Dispatch<SetStateAction<string>>;
 };
 
-export default function SignIn({ setAuthFormType }: Props) {
+type FormData = {
+	email: string;
+	password: string;
+};
+
+export default function SignIn({ setAuthFormType, setEmail }: Props) {
+	const {
+		register,
+		handleSubmit,
+		getValues,
+		formState: { errors },
+	} = useForm<FormData>();
+
+	const onSubmit = (data: FormData) => {
+		console.log(data);
+	};
+
 	return (
 		<Box
 			sx={{
@@ -27,27 +46,34 @@ export default function SignIn({ setAuthFormType }: Props) {
 			}}
 		>
 			<Typography variant="h5">Sign in</Typography>
-			<Box component="form" onSubmit={() => {}} noValidate sx={{ mt: 1 }}>
+			<Box
+				component="form"
+				onSubmit={handleSubmit(onSubmit)}
+				noValidate
+				sx={{ mt: 1 }}
+			>
 				<TextField
 					margin="dense"
 					required
 					fullWidth
 					id="email"
 					label="Email Address"
-					name="email"
 					autoComplete="email"
 					size="small"
+					{...register("email", {
+						validate: (value) => validator.isEmail(value),
+					})}
 				/>
 				<TextField
 					margin="dense"
 					required
 					fullWidth
-					name="password"
 					label="Password"
 					type="password"
 					id="password"
 					autoComplete="current-password"
 					size="small"
+					{...register("password")}
 				/>
 				<FormControlLabel
 					control={<Checkbox value="remember" color="primary" />}
@@ -63,7 +89,13 @@ export default function SignIn({ setAuthFormType }: Props) {
 				</Button>
 				<Grid container>
 					<Grid item xs>
-						<Link onClick={() => setAuthFormType("FORGOT_PW")} variant="body2">
+						<Link
+							onClick={() => {
+								setEmail(getValues("email"));
+								setAuthFormType("FORGOT_PW");
+							}}
+							variant="body2"
+						>
 							Forgot password?
 						</Link>
 					</Grid>

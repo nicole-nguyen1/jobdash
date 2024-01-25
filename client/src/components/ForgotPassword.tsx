@@ -6,13 +6,14 @@ import validator from "validator";
 
 type Props = {
 	setAuthFormType: Dispatch<SetStateAction<AuthFormType>>;
+	email: string;
 };
 
 type FormData = {
 	email: string;
 };
 
-export default function ForgotPassword({ setAuthFormType }: Props) {
+export default function ForgotPassword({ setAuthFormType, email }: Props) {
 	const {
 		register,
 		handleSubmit,
@@ -23,7 +24,6 @@ export default function ForgotPassword({ setAuthFormType }: Props) {
 
 	const onSubmit = (data: FormData) => {
 		setShowEmailSentMessage(true);
-		setAuthFormType("FORGOT_PW");
 	};
 
 	return (
@@ -58,6 +58,7 @@ export default function ForgotPassword({ setAuthFormType }: Props) {
 					label="Email Address"
 					autoComplete="email"
 					size="small"
+					defaultValue={email}
 					error={errors.email != null}
 					helperText={errors?.email && "Invalid email address"}
 					{...register("email", {
