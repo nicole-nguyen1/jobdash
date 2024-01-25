@@ -56,10 +56,17 @@ export default function Home() {
 						</Typography>
 					</Box>
 					{authFormType === "SIGN_IN" && (
-						<SignIn setAuthFormType={setAuthFormType} setEmail={setEmail} />
+						<SignIn
+							authFormType={authFormType}
+							setAuthFormType={setAuthFormType}
+							setEmail={setEmail}
+						/>
 					)}
 					{authFormType === "SIGN_UP" && (
-						<SignUp setAuthFormType={setAuthFormType} />
+						<SignUp
+							authFormType={authFormType}
+							setAuthFormType={setAuthFormType}
+						/>
 					)}
 					{authFormType === "FORGOT_PW" && (
 						<ForgotPassword setAuthFormType={setAuthFormType} email={email} />
