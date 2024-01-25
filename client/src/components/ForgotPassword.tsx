@@ -1,40 +1,30 @@
 import { AuthFormType } from "@/app/page";
 import { Box, Typography, TextField, Button, Grid } from "@mui/material";
 import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
 import validator from "validator";
 
 type Props = {
 	setAuthFormType: Dispatch<SetStateAction<AuthFormType>>;
 };
 
+type FormData = {
+	email: string;
+};
+
 export default function ForgotPassword({ setAuthFormType }: Props) {
-	const [email, setEmail] = useState<string>("");
-	const [error, setError] = useState<string | null>(null);
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<FormData>();
 	const [showEmailSentMessage, setShowEmailSentMessage] =
 		useState<boolean>(false);
 
-	const onSubmit = (e: React.SyntheticEvent) => {
-		const isEmailValid = validator.isEmail(email);
-		if (isEmailValid) {
-			setError(null);
-			setShowEmailSentMessage(true);
-		} else {
-			setError("Invalid email address");
-		}
-
-		e.preventDefault();
+	const onSubmit = (data: FormData) => {
+		setShowEmailSentMessage(true);
+		setAuthFormType("FORGOT_PW");
 	};
-
-	const onChange = useCallback(
-		(e: React.SyntheticEvent) => {
-			if (showEmailSentMessage) {
-				setShowEmailSentMessage(false);
-			}
-			setError(null);
-			setEmail((e.target as HTMLInputElement).value);
-		},
-		[showEmailSentMessage]
-	);
 
 	return (
 		<Box
@@ -57,7 +47,7 @@ export default function ForgotPassword({ setAuthFormType }: Props) {
 			</Box>
 			<Box
 				component="form"
-				onSubmit={(e) => onSubmit(e)}
+				onSubmit={handleSubmit(onSubmit)}
 				sx={{ mt: 1, width: "100%" }}
 			>
 				<TextField
@@ -66,12 +56,14 @@ export default function ForgotPassword({ setAuthFormType }: Props) {
 					fullWidth
 					id="email"
 					label="Email Address"
-					name="email"
 					autoComplete="email"
 					size="small"
-					onChange={(e) => onChange(e)}
-					error={error != null}
-					helperText={error}
+					error={errors.email != null}
+					helperText={errors?.email && "Invalid email address"}
+					{...register("email", {
+						required: "Email is required",
+						validate: (value) => validator.isEmail(value),
+					})}
 				/>
 				<Grid container direction="row" columns={10} columnGap={4}>
 					<Grid item columns={2}>

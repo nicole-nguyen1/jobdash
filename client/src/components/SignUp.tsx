@@ -10,7 +10,8 @@ import {
 	Checkbox,
 	Button,
 } from "@mui/material";
-import React, { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
+import validator from "validator";
 
 type Props = {
 	setAuthFormType: Dispatch<SetStateAction<AuthFormType>>;
