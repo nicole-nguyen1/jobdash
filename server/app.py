@@ -1,19 +1,18 @@
-import os
-import psycopg2
 from flask import Flask, jsonify
 from flask_cors import CORS
+from flask_bcrypt import Bcrypt
+
+from auth import bp as auth_bp
 
 # app instance
 app = Flask(__name__)
 CORS(app)
+bcrypt = Bcrypt(app)
 
-def get_db_connection():
-    conn = psycopg2.connect(host='localhost',
-      database=os.environ.get('DB_NAME'),
-      user=os.environ.get('DB_USERNAME'),
-      password=os.environ.get('DB_PASSWORD'))
-    return conn
+# blueprints
+app.register_blueprint(auth_bp)
 
+# home route
 @app.route("/api/home", methods=['GET'])
 def home():
   # conn = get_db_connection()

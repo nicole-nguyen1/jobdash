@@ -17,6 +17,8 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import validator from "validator";
 import PasswordInput from "./PasswordInput";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 type Props = {
 	authFormType: AuthFormType;
@@ -30,9 +32,6 @@ type FormData = {
 	password: string;
 };
 
-const PASSWORD_REQUIREMENTS_STR =
-	"Must be 8-20 characters long and have at least 1 number and 1 symbol";
-
 export default function SignUp({ authFormType, setAuthFormType }: Props) {
 	const formMethods = useForm<FormData>();
 	const {
@@ -40,11 +39,25 @@ export default function SignUp({ authFormType, setAuthFormType }: Props) {
 		handleSubmit,
 		formState: { errors },
 	} = formMethods;
-	const [showPassword, setShowPassword] = useState(false);
 
-	console.log(errors);
+	const [showUserAlreadyExists, setShowUserAlreadyExists] =
+		useState<boolean>(false);
 
-	const onSubmit = (data: FormData) => {};
+	const queryClient = useQueryClient();
+	const mutation = useMutation({
+		mutationFn: (data: FormData) =>
+			axios.post("http://localhost:8080/auth/signup", data),
+		onSuccess: (data, error) => {
+			if (data.data.event === "USER_ALREADY_EXISTS") {
+				setShowUserAlreadyExists(true);
+			}
+		},
+		onError: (data, error) => console.log({ data, error }),
+	});
+
+	const onSubmit = (data: FormData) => {
+		mutation.mutate(data);
+	};
 
 	return (
 		<Box
@@ -56,6 +69,11 @@ export default function SignUp({ authFormType, setAuthFormType }: Props) {
 			}}
 		>
 			<Typography variant="h5">Sign up</Typography>
+			{showUserAlreadyExists && (
+				<Typography variant="body2" sx={{ fontStyle: "italic", m: 2 }}>
+					You already have an existing account under this email. Try signing in.
+				</Typography>
+			)}
 			<FormProvider {...formMethods}>
 				<Box
 					component="form"
