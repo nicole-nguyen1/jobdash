@@ -11,24 +11,26 @@ export default function Home() {
 	const router = useRouter();
 
 	useEffect(() => {
-		axios
-			.get("http://localhost:8080/auth/home", {
-				withCredentials: true,
-			})
-			.then((res) => {
-				setIsCheckingAuth(false);
-				if (res.status === 200) {
-					setIsAuthorized(true);
-				}
-			})
-			.catch((error) => {
-				if (error.response.status === 401) {
+		if (!isAuthorized) {
+			axios
+				.get("http://localhost:8080/auth/home", {
+					withCredentials: true,
+				})
+				.then((res) => {
 					setIsCheckingAuth(false);
-					setIsAuthorized(false);
-					router.push("/");
-				}
-			});
-	}, [router]);
+					if (res.status === 200) {
+						setIsAuthorized(true);
+					}
+				})
+				.catch((error) => {
+					if (error.response.status === 401) {
+						setIsCheckingAuth(false);
+						setIsAuthorized(false);
+						router.push("/");
+					}
+				});
+		}
+	}, [isAuthorized, router]);
 
 	const onClick = async () => {
 		const res = await axios

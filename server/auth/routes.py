@@ -54,7 +54,7 @@ def login():
   password = data['password']
 
   # find user
-  user = find_user(['id', 'password'], email, False)
+  user = find_user(['id', 'password'], email, True)
 
   event = 'USER_LOGIN_FAILED'
   if (user is not None):
