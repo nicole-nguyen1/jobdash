@@ -10,6 +10,9 @@ from auth.utils import find_user
 def home():
   email = session.get('username')
   user = find_user(['id'], email, True)
+  print(session.items())
+  print(email)
+  print(user)
   if (user is None):
     return jsonify({}), 401
   else:
@@ -64,6 +67,7 @@ def login():
       session["username"] = email
       event = 'USER_LOGIN_SUCCESS'
 
+  print(session.items())
   return jsonify({'event': event})
 
 @bp.route('/logout', methods=['POST'])
