@@ -6,7 +6,6 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
 	Box,
-	Container,
 	Divider,
 	IconButton,
 	List,
@@ -171,9 +170,10 @@ export default function AuthorizedUserLayout({
 				}}
 			>
 				<Toolbar />
-				<Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+				{children}
+				{/* <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
 					{children}
-				</Container>
+				</Container> */}
 			</Box>
 		</Box>
 	);

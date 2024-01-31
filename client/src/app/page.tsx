@@ -1,8 +1,5 @@
 "use client";
 
-import ForgotPassword from "@/components/ForgotPassword";
-import SignIn from "@/components/SignIn";
-import SignUp from "@/components/SignUp";
 import {
 	Box,
 	Container,
@@ -12,6 +9,9 @@ import {
 	createTheme,
 } from "@mui/material";
 import { useState } from "react";
+import ForgotPassword from "../components/auth/ForgotPassword";
+import SignIn from "../components/auth/SignIn";
+import SignUp from "../components/auth/SignUp";
 
 const darkTheme = createTheme({
 	palette: {

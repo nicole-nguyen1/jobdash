@@ -1,6 +1,13 @@
 "use client";
 
-import { Dispatch, SetStateAction, createContext, useState } from "react";
+import axios from "axios";
+import {
+	Dispatch,
+	SetStateAction,
+	createContext,
+	useEffect,
+	useState,
+} from "react";
 
 type LayoutContext = {
 	isAuthorized: boolean;
@@ -18,6 +25,21 @@ export default function LayoutProvider({
 	children: React.ReactNode;
 }): React.ReactNode {
 	const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
+
+	useEffect(() => {
+		axios
+			.get("http://localhost:8080/auth/home", { withCredentials: true })
+			.then((res) => {
+				if (res.status === 200) {
+					setIsAuthorized(true);
+				}
+			})
+			.catch((error) => {
+				if (error.status === 401) {
+					setIsAuthorized(false);
+				}
+			});
+	}, []);
 
 	return (
 		<LayoutContext.Provider
