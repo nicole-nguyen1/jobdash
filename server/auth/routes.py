@@ -1,9 +1,8 @@
-from flask import jsonify, request, session
-from auth import bp
-from dbconnection import get_db_connection
 import bcrypt
-
+from auth import bp
 from auth.utils import find_user
+from flask import jsonify, request, session
+
 
 # home route
 @bp.route("/home", methods=['GET'])

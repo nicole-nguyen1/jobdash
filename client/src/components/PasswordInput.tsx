@@ -1,8 +1,8 @@
 import { AuthFormType } from "@/app/page";
-import { VisibilityOff, Visibility } from "@mui/icons-material";
-import { TextField, InputAdornment, IconButton } from "@mui/material";
-import React, { useMemo, useState } from "react";
-import { FieldErrors, UseFormRegister, useFormContext } from "react-hook-form";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { IconButton, InputAdornment, TextField } from "@mui/material";
+import { useMemo, useState } from "react";
+import { useFormContext } from "react-hook-form";
 import validator from "validator";
 
 type Props = {

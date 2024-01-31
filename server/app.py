@@ -1,12 +1,12 @@
 import os
-import redis
-from flask import Flask, jsonify
-from flask_cors import CORS
-from flask_bcrypt import Bcrypt
-from flask_session import Session
-from dotenv import load_dotenv
 
+import redis
 from auth import bp as auth_bp
+from dotenv import load_dotenv
+from flask import Flask, jsonify
+from flask_bcrypt import Bcrypt
+from flask_cors import CORS
+from flask_session import Session
 
 load_dotenv('../database/.env')
 

@@ -5,13 +5,13 @@ import SignIn from "@/components/SignIn";
 import SignUp from "@/components/SignUp";
 import {
 	Box,
+	Container,
+	CssBaseline,
+	ThemeProvider,
 	Typography,
 	createTheme,
-	ThemeProvider,
-	CssBaseline,
-	Container,
 } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 
 const darkTheme = createTheme({
 	palette: {
