@@ -1,7 +1,19 @@
-from flask import jsonify, request
+from flask import jsonify, request, session
 from auth import bp
 from dbconnection import get_db_connection
 import bcrypt
+
+from auth.utils import find_user
+
+# home route
+@bp.route("/home", methods=['GET'])
+def home():
+  email = session.get('username')
+  user = find_user(['id'], email, True)
+  if (user is None):
+    return jsonify({}), 401
+  else:
+    return jsonify({}), 200
 
 @bp.route('/signup', methods=['POST'])
 def signup():
@@ -11,13 +23,10 @@ def signup():
   email = data['email']
 
   # check if user currently exists
-  conn = get_db_connection()
-  cursor = conn.cursor()
-  cursor.execute('SELECT id from users WHERE email = (%s)', (email,))
-  found_user_id = cursor.fetchone()
+  (user, cursor, conn) = find_user(['id'], email, False)
 
   # if user does not exist, add to db
-  if (found_user_id is None):
+  if (user is None):
     password = data['password']
     bytes = password.encode('utf-8')
     salt = bcrypt.gensalt()
@@ -26,8 +35,9 @@ def signup():
     cursor.execute('INSERT INTO users (firstname, lastname, email, password) '
                   'VALUES (%s, %s, %s, %s) RETURNING id',
                   (first_name, last_name, email, hashed_password,))
-    found_user_id = cursor.fetchone()
+    user = cursor.fetchone()
     event = 'USER_CREATED_SUCCESS'
+    session['username'] = email
   else:
     event = 'USER_ALREADY_EXISTS'
 
@@ -35,4 +45,28 @@ def signup():
 
   cursor.close()
   conn.close()
-  return jsonify({'userID': found_user_id[0], 'event': event})
+  return jsonify({'event': event})
+
+@bp.route('/login', methods=['POST'])
+def login():
+  data = request.get_json()
+  email = data['email']
+  password = data['password']
+
+  # find user
+  user = find_user(['id', 'password'], email, False)
+
+  event = 'USER_LOGIN_FAILED'
+  if (user is not None):
+    # check password
+    check_pw = bcrypt.checkpw(password.encode('utf-8'), bytes(user[1]))
+    if (check_pw is True):
+      session["username"] = email
+      event = 'USER_LOGIN_SUCCESS'
+
+  return jsonify({'event': event})
+
+@bp.route('/logout', methods=['POST'])
+def logout():
+  session.pop('username')
+  return jsonify({'event': 'USER_LOGOUT_SUCCESS'})

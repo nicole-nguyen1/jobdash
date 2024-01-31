@@ -9,10 +9,13 @@ import {
 	Grid,
 	Link,
 } from "@mui/material";
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import validator from "validator";
 import PasswordInput from "./PasswordInput";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 type Props = {
 	authFormType: AuthFormType;
@@ -37,9 +40,27 @@ export default function SignIn({
 		getValues,
 		formState: { errors },
 	} = formMethods;
+	const router = useRouter();
+
+	const [showLoginError, setShowLoginError] = useState<boolean>(false);
+
+	const mutation = useMutation({
+		mutationFn: (data: FormData) =>
+			axios.post("http://localhost:8080/auth/login", data, {
+				withCredentials: true,
+			}),
+		onSuccess: (data) => {
+			if (data.data.event === "USER_LOGIN_FAILED") {
+				setShowLoginError(true);
+			} else if (data.data.event === "USER_LOGIN_SUCCESS") {
+				router.push("/home");
+			}
+		},
+		onError: (error) => console.log({ error }),
+	});
 
 	const onSubmit = (data: FormData) => {
-		console.log(data);
+		mutation.mutate(data);
 	};
 
 	return (
@@ -52,6 +73,11 @@ export default function SignIn({
 			}}
 		>
 			<Typography variant="h5">Sign in</Typography>
+			{showLoginError && (
+				<Typography variant="body2" sx={{ fontStyle: "italic", m: 2 }}>
+					Try a different email and/or password or reset your password.
+				</Typography>
+			)}
 			<FormProvider {...formMethods}>
 				<Box
 					component="form"

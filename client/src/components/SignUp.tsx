@@ -1,24 +1,12 @@
 import { AuthFormType } from "@/app/page";
-import { VisibilityOff, Visibility } from "@mui/icons-material";
-import {
-	Box,
-	Avatar,
-	Link,
-	Typography,
-	Grid,
-	TextField,
-	FormControlLabel,
-	Checkbox,
-	Button,
-	IconButton,
-	InputAdornment,
-} from "@mui/material";
+import { Box, Link, Typography, Grid, TextField, Button } from "@mui/material";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import validator from "validator";
 import PasswordInput from "./PasswordInput";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 type Props = {
 	authFormType: AuthFormType;
@@ -39,20 +27,24 @@ export default function SignUp({ authFormType, setAuthFormType }: Props) {
 		handleSubmit,
 		formState: { errors },
 	} = formMethods;
+	const router = useRouter();
 
 	const [showUserAlreadyExists, setShowUserAlreadyExists] =
 		useState<boolean>(false);
 
-	const queryClient = useQueryClient();
 	const mutation = useMutation({
 		mutationFn: (data: FormData) =>
-			axios.post("http://localhost:8080/auth/signup", data),
-		onSuccess: (data, error) => {
+			axios.post("http://localhost:8080/auth/signup", data, {
+				withCredentials: true,
+			}),
+		onSuccess: (data) => {
 			if (data.data.event === "USER_ALREADY_EXISTS") {
 				setShowUserAlreadyExists(true);
+			} else if (data.data.event === "USER_CREATED_SUCCESS") {
+				router.push("/home");
 			}
 		},
-		onError: (data, error) => console.log({ data, error }),
+		onError: (error) => console.log({ error }),
 	});
 
 	const onSubmit = (data: FormData) => {
