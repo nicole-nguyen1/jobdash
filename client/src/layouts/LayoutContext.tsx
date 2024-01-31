@@ -1,6 +1,7 @@
 "use client";
 
 import axios from "axios";
+import { usePathname } from "next/navigation";
 import {
 	Dispatch,
 	SetStateAction,
@@ -25,29 +26,27 @@ export default function LayoutProvider({
 	children: React.ReactNode;
 }): React.ReactNode {
 	const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
+	const pathname = usePathname();
 
 	useEffect(() => {
-		axios
-			.get("http://localhost:8080/auth/home", { withCredentials: true })
-			.then((res) => {
-				if (res.status === 200) {
-					setIsAuthorized(true);
-				}
-			})
-			.catch((error) => {
-				if (error.status === 401) {
-					setIsAuthorized(false);
-				}
-			});
-	}, []);
+		if (pathname !== "/") {
+			axios
+				.get("http://localhost:8080/auth/session", { withCredentials: true })
+				.then((res) => {
+					if (res.status === 200) {
+						setIsAuthorized(true);
+					}
+				})
+				.catch((error) => {
+					if (error.status === 401) {
+						setIsAuthorized(false);
+					}
+				});
+		}
+	}, [pathname]);
 
 	return (
-		<LayoutContext.Provider
-			value={{
-				isAuthorized,
-				setIsAuthorized,
-			}}
-		>
+		<LayoutContext.Provider value={{ isAuthorized, setIsAuthorized }}>
 			{children}
 		</LayoutContext.Provider>
 	);

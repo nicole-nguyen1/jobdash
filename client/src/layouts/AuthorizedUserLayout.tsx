@@ -171,9 +171,6 @@ export default function AuthorizedUserLayout({
 			>
 				<Toolbar />
 				{children}
-				{/* <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-					{children}
-				</Container> */}
 			</Box>
 		</Box>
 	);

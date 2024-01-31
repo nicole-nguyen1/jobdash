@@ -5,7 +5,7 @@ from flask import jsonify, request, session
 
 
 # home route
-@bp.route("/home", methods=['GET'])
+@bp.route("/session", methods=['GET'])
 def home():
   email = session.get('username')
   user = find_user(['id'], email, True)

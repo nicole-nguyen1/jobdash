@@ -1,9 +1,9 @@
 import JobDashThemeProvider from "@/components/global/JobDashThemeProvider";
 import ReactQueryClientProvider from "@/components/global/ReactQueryClientProvider";
+import AppLayout from "@/layouts/AppLayout";
 import LayoutProvider from "@/layouts/LayoutContext";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import AppLayout from "../layouts/AppLayout";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });

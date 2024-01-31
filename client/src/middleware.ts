@@ -6,6 +6,8 @@ export async function middleware(req: NextRequest) {
 
 	if (session == null && req.nextUrl.pathname !== "/") {
 		return NextResponse.redirect(req.nextUrl.origin);
+	} else if (session != null && req.nextUrl.pathname === "/") {
+		return NextResponse.redirect(req.nextUrl.origin + "/home");
 	}
 
 	return NextResponse.next();

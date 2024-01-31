@@ -52,7 +52,6 @@ export default function SignIn({
 				withCredentials: true,
 			}),
 		onSuccess: (data) => {
-			console.log(data);
 			if (data.data.event === "USER_LOGIN_FAILED") {
 				setShowLoginError(true);
 			} else if (data.data.event === "USER_LOGIN_SUCCESS") {
