@@ -1,31 +1,34 @@
 import os
-import psycopg2
+import redis
 from flask import Flask, jsonify
 from flask_cors import CORS
+from flask_bcrypt import Bcrypt
+from flask_session import Session
+from dotenv import load_dotenv
+
+from auth import bp as auth_bp
+
+load_dotenv('../database/.env')
 
 # app instance
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
+bcrypt = Bcrypt(app)
 
-def get_db_connection():
-    conn = psycopg2.connect(host='localhost',
-      database=os.environ.get('DB_NAME'),
-      user=os.environ.get('DB_USERNAME'),
-      password=os.environ.get('DB_PASSWORD'))
-    return conn
+# Details on the Secret Key: https://flask.palletsprojects.com/en/3.0.x/config/#SECRET_KEY
+app.secret_key = os.getenv('SECRET_KEY')
 
-@app.route("/api/home", methods=['GET'])
-def home():
-  # conn = get_db_connection()
-  # cur = conn.cursor()
-  # cur.execute('SELECT * FROM books;')
-  # books = cur.fetchall()
-  # cur.close()
-  # conn.close()
-  return jsonify({
-    'message': 'Hello world!',
-    # 'books': books
-  })
+# Configure Redis for storing the session data on the server-side
+app.config['SESSION_TYPE'] = 'redis'
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_USE_SIGNER'] = True
+app.config['SESSION_REDIS'] = redis.from_url(os.getenv('REDIS_URL'))
+
+# Create and initialize the Flask-Session object AFTER `app` has been configured
+server_session = Session(app)
+
+# blueprints
+app.register_blueprint(auth_bp)
 
 # run app in dev
 if __name__ == "__main__":

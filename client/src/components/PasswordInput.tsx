@@ -10,7 +10,7 @@ type Props = {
 };
 
 const PASSWORD_REQUIREMENTS_STR =
-	"Must be 8-20 characters long and have at least 1 number and 1 symbol";
+	"Must be 8-20 characters long and have at least 1 capital letter, 1 number, and 1 symbol";
 
 export default function PasswordInput({ authFormType }: Props) {
 	const {

@@ -11,7 +11,7 @@ import {
 	CssBaseline,
 	Container,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 const darkTheme = createTheme({
 	palette: {
@@ -21,15 +21,9 @@ const darkTheme = createTheme({
 
 export type AuthFormType = "SIGN_UP" | "SIGN_IN" | "FORGOT_PW";
 
-export default function Home() {
+export default function App() {
 	const [authFormType, setAuthFormType] = useState<AuthFormType>("SIGN_IN");
 	const [email, setEmail] = useState<string>("");
-
-	// useEffect(() => {
-	// 	fetch("http://localhost:8080/api/home")
-	// 		.then((res) => res.json())
-	// 		.then((res) => setMessage(res.message));
-	// }, []);
 
 	return (
 		<ThemeProvider theme={darkTheme}>

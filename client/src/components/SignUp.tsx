@@ -1,22 +1,12 @@
 import { AuthFormType } from "@/app/page";
-import { VisibilityOff, Visibility } from "@mui/icons-material";
-import {
-	Box,
-	Avatar,
-	Link,
-	Typography,
-	Grid,
-	TextField,
-	FormControlLabel,
-	Checkbox,
-	Button,
-	IconButton,
-	InputAdornment,
-} from "@mui/material";
+import { Box, Link, Typography, Grid, TextField, Button } from "@mui/material";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import validator from "validator";
 import PasswordInput from "./PasswordInput";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 type Props = {
 	authFormType: AuthFormType;
@@ -30,9 +20,6 @@ type FormData = {
 	password: string;
 };
 
-const PASSWORD_REQUIREMENTS_STR =
-	"Must be 8-20 characters long and have at least 1 number and 1 symbol";
-
 export default function SignUp({ authFormType, setAuthFormType }: Props) {
 	const formMethods = useForm<FormData>();
 	const {
@@ -40,11 +27,29 @@ export default function SignUp({ authFormType, setAuthFormType }: Props) {
 		handleSubmit,
 		formState: { errors },
 	} = formMethods;
-	const [showPassword, setShowPassword] = useState(false);
+	const router = useRouter();
 
-	console.log(errors);
+	const [showUserAlreadyExists, setShowUserAlreadyExists] =
+		useState<boolean>(false);
 
-	const onSubmit = (data: FormData) => {};
+	const mutation = useMutation({
+		mutationFn: (data: FormData) =>
+			axios.post("http://localhost:8080/auth/signup", data, {
+				withCredentials: true,
+			}),
+		onSuccess: (data) => {
+			if (data.data.event === "USER_ALREADY_EXISTS") {
+				setShowUserAlreadyExists(true);
+			} else if (data.data.event === "USER_CREATED_SUCCESS") {
+				router.push("/home");
+			}
+		},
+		onError: (error) => console.log({ error }),
+	});
+
+	const onSubmit = (data: FormData) => {
+		mutation.mutate(data);
+	};
 
 	return (
 		<Box
@@ -56,6 +61,11 @@ export default function SignUp({ authFormType, setAuthFormType }: Props) {
 			}}
 		>
 			<Typography variant="h5">Sign up</Typography>
+			{showUserAlreadyExists && (
+				<Typography variant="body2" sx={{ fontStyle: "italic", m: 2 }}>
+					You already have an existing account under this email. Try signing in.
+				</Typography>
+			)}
 			<FormProvider {...formMethods}>
 				<Box
 					component="form"
