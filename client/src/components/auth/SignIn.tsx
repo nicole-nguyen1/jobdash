@@ -36,12 +36,7 @@ export default function SignIn({
 }: Props) {
 	const { setIsAuthorized } = useContext(LayoutContext);
 	const formMethods = useForm<FormData>();
-	const {
-		register,
-		handleSubmit,
-		getValues,
-		formState: { errors },
-	} = formMethods;
+	const { register, handleSubmit, getValues } = formMethods;
 	const router = useRouter();
 
 	const [showLoginError, setShowLoginError] = useState<boolean>(false);
