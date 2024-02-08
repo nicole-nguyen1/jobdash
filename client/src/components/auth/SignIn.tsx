@@ -1,21 +1,22 @@
 import { AuthFormType } from "@/app/page";
+import { LayoutContext } from "@/layouts/LayoutContext";
 import {
 	Box,
-	Typography,
-	TextField,
-	FormControlLabel,
-	Checkbox,
 	Button,
+	Checkbox,
+	FormControlLabel,
 	Grid,
 	Link,
+	TextField,
+	Typography,
 } from "@mui/material";
-import React, { Dispatch, SetStateAction, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import validator from "validator";
-import PasswordInput from "./PasswordInput";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import validator from "validator";
+import PasswordInput from "./PasswordInput";
 
 type Props = {
 	authFormType: AuthFormType;
@@ -33,13 +34,9 @@ export default function SignIn({
 	setAuthFormType,
 	setEmail,
 }: Props) {
+	const { setIsAuthorized } = useContext(LayoutContext);
 	const formMethods = useForm<FormData>();
-	const {
-		register,
-		handleSubmit,
-		getValues,
-		formState: { errors },
-	} = formMethods;
+	const { register, handleSubmit, getValues } = formMethods;
 	const router = useRouter();
 
 	const [showLoginError, setShowLoginError] = useState<boolean>(false);
@@ -53,6 +50,7 @@ export default function SignIn({
 			if (data.data.event === "USER_LOGIN_FAILED") {
 				setShowLoginError(true);
 			} else if (data.data.event === "USER_LOGIN_SUCCESS") {
+				setIsAuthorized(true);
 				router.push("/home");
 			}
 		},

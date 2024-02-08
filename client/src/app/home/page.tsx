@@ -1,55 +1,48 @@
 "use client";
 
-import { Button, Typography } from "@mui/material";
+import { Container, Grid } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
+import PipelineStage from "./PipelineStage";
+import { pipelineStatusConfig } from "./pipelineStatusTypes";
+
+export type JobsPayload = {
+	id: string;
+	title: string;
+	companyName: string;
+	currStatus: string;
+	cardColor: string;
+	companyURL: string;
+};
 
 export default function Home() {
-	const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
-	const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
-	const router = useRouter();
+	const pipelineStages: Array<string> = Object.keys(pipelineStatusConfig);
+	const [jobs, setJobs] = useState<Array<JobsPayload>>([]);
 
-	useEffect(() => {
-		if (!isAuthorized) {
-			axios
-				.get("http://localhost:8080/auth/home", {
-					withCredentials: true,
-				})
-				.then((res) => {
-					setIsCheckingAuth(false);
-					if (res.status === 200) {
-						setIsAuthorized(true);
-					}
-				})
-				.catch((error) => {
-					if (error.response.status === 401) {
-						setIsCheckingAuth(false);
-						setIsAuthorized(false);
-						router.push("/");
-					}
-				});
-		}
-	}, [isAuthorized, router]);
-
-	const onClick = async () => {
-		const res = await axios
-			.post("http://localhost:8080/auth/logout", {}, { withCredentials: true })
-			.then((res) => res.data);
-		if (res.event === "USER_LOGOUT_SUCCESS") {
-			router.push("/");
-		}
+	const fetchJobs = async () => {
+		const result = await axios.get("http://localhost:8080/pipeline/", {
+			withCredentials: true,
+		});
+		setJobs(result.data);
 	};
 
-	return isCheckingAuth || !isAuthorized ? (
-		<div />
-	) : (
-		<div>
-			<Typography>
-				Hello world! You have reached the home page for your logged in
-				experience.
-			</Typography>
-			<Button onClick={onClick}>Logout</Button>
-		</div>
+	const { data, error } = useQuery({
+		queryKey: ["fetchJobs"],
+		queryFn: fetchJobs,
+	});
+
+	return (
+		<Container maxWidth="xl" sx={{ mt: 4, mb: 4, height: "100%" }}>
+			<Grid container direction="row" columnSpacing={4} columns={12}>
+				{pipelineStages.map((stage) => (
+					<PipelineStage
+						key={stage}
+						stage={stage}
+						jobs={jobs.filter((job) => job.currStatus === stage)}
+					/>
+				))}
+			</Grid>
+		</Container>
 	);
 }

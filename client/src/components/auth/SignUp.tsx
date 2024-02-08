@@ -1,12 +1,12 @@
 import { AuthFormType } from "@/app/page";
-import { Box, Link, Typography, Grid, TextField, Button } from "@mui/material";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import validator from "validator";
-import PasswordInput from "./PasswordInput";
+import { Box, Button, Grid, Link, TextField, Typography } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { Dispatch, SetStateAction, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import validator from "validator";
+import PasswordInput from "./PasswordInput";
 
 type Props = {
 	authFormType: AuthFormType;

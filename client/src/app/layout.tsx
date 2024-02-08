@@ -1,8 +1,10 @@
+import JobDashThemeProvider from "@/components/global/JobDashThemeProvider";
+import ReactQueryClientProvider from "@/components/global/ReactQueryClientProvider";
+import AppLayout from "@/layouts/AppLayout";
+import LayoutProvider from "@/layouts/LayoutContext";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import ReactQueryClientProvider from "@/components/global/ReactQueryClientProvider";
-import JobDashThemeProvider from "@/components/global/JobDashThemeProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,9 +21,13 @@ export default function RootLayout({
 	return (
 		<JobDashThemeProvider>
 			<ReactQueryClientProvider>
-				<html lang="en">
-					<body className={inter.className}>{children}</body>
-				</html>
+				<LayoutProvider>
+					<html lang="en">
+						<body className={inter.className}>
+							<AppLayout>{children}</AppLayout>
+						</body>
+					</html>
+				</LayoutProvider>
 			</ReactQueryClientProvider>
 		</JobDashThemeProvider>
 	);

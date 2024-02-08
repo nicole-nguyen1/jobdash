@@ -1,7 +1,9 @@
 import os
 from sqlite3 import OperationalError
+
 import psycopg2
 from dotenv import load_dotenv
+
 load_dotenv('./.env')
 
 conn = psycopg2.connect(

@@ -1,5 +1,6 @@
 from dbconnection import get_db_connection
 
+
 def find_user(sql_columns: list, email: str, shouldCloseConnection: bool):
   conn = get_db_connection()
   cursor = conn.cursor()
