@@ -13,6 +13,11 @@ export enum AppliedType {
 	REFERRED = "Referred",
 }
 
+export enum RecruiterScreenType {
+	REQUESTED_TO_SCHEDULE = "Requested To Schedule",
+	SCHEDULED_SCREEN = "Scheduled Screen",
+}
+
 export enum InterviewType {
 	MANAGER_SCREEN = "Manager Screen",
 	TAKE_HOME_ASSIGNMENT = "Take Home Assignment",
@@ -33,6 +38,7 @@ export enum DecisionType {
 	DID_NOT_PASS_INTERVIEW = "Did Not Pass Interview",
 	DID_NOT_PASS_SCREEN = "Did Not Pass Screen",
 	GHOSTED = "Ghosted",
+	NO_RESPONSE = "No Response",
 }
 
 export const pipelineStatusConfig = {
@@ -41,7 +47,10 @@ export const pipelineStatusConfig = {
 		AppliedType.RECRUITED,
 		AppliedType.REFERRED,
 	],
-	[PipelineStatus.RECRUITER_SCREEN]: [],
+	[PipelineStatus.RECRUITER_SCREEN]: [
+		RecruiterScreenType.REQUESTED_TO_SCHEDULE,
+		RecruiterScreenType.SCHEDULED_SCREEN,
+	],
 	[PipelineStatus.INTERVIEW]: [
 		InterviewType.MANAGER_SCREEN,
 		InterviewType.TAKE_HOME_ASSIGNMENT,

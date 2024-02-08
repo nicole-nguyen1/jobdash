@@ -1,11 +1,14 @@
 import { Box, Grid, Typography } from "@mui/material";
 import AddJobListingButton from "./AddJobListingButton";
+import JobCard from "./JobCard";
+import { JobsPayload } from "./page";
 
 type Props = {
 	stage: string;
+	jobs: Array<JobsPayload>;
 };
 
-export default function PipelineStage({ stage }: Props) {
+export default function PipelineStage({ stage, jobs }: Props) {
 	return (
 		<Grid item key={stage} xs={2}>
 			<Box
@@ -22,6 +25,9 @@ export default function PipelineStage({ stage }: Props) {
 					{stage}
 				</Typography>
 				<AddJobListingButton />
+				{jobs.map((job) => (
+					<JobCard key={job.id} job={job} />
+				))}
 			</Box>
 		</Grid>
 	);

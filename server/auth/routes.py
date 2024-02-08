@@ -9,9 +9,6 @@ from flask import jsonify, request, session
 def home():
   email = session.get('username')
   user = find_user(['id'], email, True)
-  print(session.items())
-  print(email)
-  print(user)
   if (user is None):
     return jsonify({}), 401
   else:

@@ -14,17 +14,36 @@ import {
 	TextField,
 	TextFieldProps,
 } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import ColorThief from "colorthief";
+import { Moment } from "moment";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { DatePickerElement } from "react-hook-form-mui";
+import rgbToHex from "../utils/rgbToHex";
+import CompanyAutocomplete, { Company } from "./CompanyAutocomplete";
 import JobStatusDropdown from "./JobStatusDropdown";
-import { PipelineStatus } from "./pipelineStatusTypes";
 
-type AddJobListingFormData = {
+type FormData = {
+	company: Company;
+	jobTitle: string;
+	url: string;
+	status: string;
+	date: Moment;
+};
+
+type RequestBody = {
 	company: string;
 	jobTitle: string;
-	url: URL;
-	status: PipelineStatus;
-	// substatus: AppliedType | InterviewType | OfferType | DecisionType | null;
+	url: string | null;
+	date: string;
+	status: string;
+	substatus: string | null;
+	companyColor: string | null;
+	companyURL: string;
 };
 
 const formFieldProps: TextFieldProps = {
@@ -49,18 +68,50 @@ const style = {
 	p: 4,
 };
 
+const colorThief = new ColorThief();
+
 export default function AddJobListingButton() {
 	const [open, setOpen] = useState<boolean>(false);
-	const formMethods = useForm<AddJobListingFormData>();
-	const { register, handleSubmit, getValues, reset } = formMethods;
+	const [company, setCompany] = useState<Company | null>(null);
+	const [companies, setCompanies] = useState<any[]>([]);
+	const formMethods = useForm<FormData>();
+	const { register, handleSubmit, reset } = formMethods;
 
 	const onDiscard = () => {
 		reset();
 		setOpen(false);
 	};
 
-	const onSubmit = (data: AddJobListingFormData) => {
-		console.log(data);
+	const mutation = useMutation({
+		mutationFn: (data: RequestBody) =>
+			axios.post("http://localhost:8080/pipeline/add", data, {
+				withCredentials: true,
+			}),
+		onSuccess: (data) => console.log(data),
+		onError: (error) => console.log(error),
+	});
+
+	const onSubmit = (data: FormData) => {
+		const { company, jobTitle, status, url, date } = data;
+		const statuses = status.split("-");
+		const img = new Image();
+		img.crossOrigin = "Anonymous";
+		img.src = company.logo;
+
+		img.addEventListener("load", () => {});
+
+		const requestBody: RequestBody = {
+			company: company.name,
+			jobTitle,
+			url: url.length > 0 ? url : null,
+			date: date.format("YYYY-MM-DD"),
+			status: statuses[0],
+			substatus: statuses.length > 1 ? statuses[1] : null,
+			companyColor: rgbToHex(colorThief.getColor(img)),
+			companyURL: company.domain,
+		};
+		console.log(requestBody);
+		mutation.mutate(requestBody);
 	};
 
 	return (
@@ -80,6 +131,19 @@ export default function AddJobListingButton() {
 							<CardHeader title="Add Job" sx={{ textAlign: "center" }} />
 							<CardContent sx={{ paddingX: 0 }}>
 								<JobStatusDropdown />
+								<LocalizationProvider dateAdapter={AdapterMoment}>
+									<DatePickerElement
+										label="Date"
+										name="date"
+										required
+										inputProps={{
+											InputLabelProps: { shrink: true },
+											size: "small",
+											required: true,
+											fullWidth: true,
+										}}
+									/>
+								</LocalizationProvider>
 								<Divider sx={{ margin: "16px 0" }} />
 								<FormControl sx={{ width: "100%", padding: "4px" }}>
 									<TextField
@@ -89,11 +153,11 @@ export default function AddJobListingButton() {
 										{...register("url")}
 									/>
 									<Divider>or</Divider>
-									<TextField
-										id="company"
-										label="Company"
-										{...formFieldProps}
-										{...register("company")}
+									<CompanyAutocomplete
+										company={company}
+										companies={companies}
+										setCompany={setCompany}
+										setCompanies={setCompanies}
 									/>
 									<TextField
 										id="jobTitle"
