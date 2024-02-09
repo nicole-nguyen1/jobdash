@@ -11,7 +11,7 @@ from pipeline import routes
 def get_jobs():
   email = session.get('username')
   (user, cursor, conn) = find_user(['id'], email, False)
-  print(user)
+
   query = """
     SELECT id, title, company_name, curr_status, company_color, card_color, company_url from jobs
     WHERE user_id = \'{0}\'
@@ -31,6 +31,7 @@ def get_jobs():
       'companyURL': job[6]
     })
 
-  print(jobs)
-  print(payload)
+  cursor.close()
+  conn.close()
+
   return jsonify(payload)

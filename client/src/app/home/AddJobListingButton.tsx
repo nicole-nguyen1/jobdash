@@ -142,6 +142,7 @@ export default function AddJobListingButton() {
 											required: true,
 											fullWidth: true,
 										}}
+										sx={{ mt: 1 }}
 									/>
 								</LocalizationProvider>
 								<Divider sx={{ margin: "16px 0" }} />

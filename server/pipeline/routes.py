@@ -3,6 +3,7 @@ from flask import jsonify, request, session
 from pipeline import bp
 
 
+# TODO when clicking save job, disable buttons in loading state, close modal, update pipeline view
 @bp.route("/add", methods=['POST'])
 def add_job():
   data = request.get_json()
@@ -11,8 +12,6 @@ def add_job():
 
   if (user is None):
     return jsonify({}), 401
-
-  print(data)
 
   user_id = user[0]
   status = data['status']
@@ -38,8 +37,6 @@ def add_job():
   """
   cursor.execute(insert_query.format(user_id))
   timeline_id = cursor.fetchone()
-  print(timeline_id)
-
   if (timeline_id is None):
     return jsonify({'event': 'TIMELINE_CREATION_FAILED'})
 
@@ -48,19 +45,13 @@ def add_job():
                  'VALUES (%s, %s, %s, %s) RETURNING id',
                  (timeline_id[0], date, status, substatus))
   event = cursor.fetchone()
-  print(event)
-
   if (event is None):
     return jsonify({'event': 'TIMELINE_EVENT_CREATION_FAILED'})
-
-  event_id = event[0]
-  print(event_id)
 
   cursor.execute('INSERT INTO jobs (user_id, timeline_id, curr_status, title, company_name, url, company_color, company_url) '
                  'VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id',
                  (user_id, timeline_id[0], status, title, company_name, url, company_color, company_url))
   job_id = cursor.fetchone()
-  print(job_id)
 
   conn.commit()
 

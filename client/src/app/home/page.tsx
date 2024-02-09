@@ -29,7 +29,7 @@ export default function Home() {
 
 	const { data, error } = useQuery({
 		queryKey: ["fetchJobs"],
-		queryFn: fetchJobs,
+		queryFn: () => fetchJobs(),
 	});
 
 	return (
