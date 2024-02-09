@@ -8,19 +8,21 @@ import {
 	CardActions,
 	CardContent,
 	CardHeader,
+	CircularProgress,
 	Divider,
 	FormControl,
 	Modal,
 	TextField,
 	TextFieldProps,
+	Typography,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import ColorThief from "colorthief";
 import { Moment } from "moment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { DatePickerElement } from "react-hook-form-mui";
 import rgbToHex from "../utils/rgbToHex";
@@ -71,9 +73,11 @@ const style = {
 const colorThief = new ColorThief();
 
 export default function AddJobListingButton() {
+	const queryClient = useQueryClient();
 	const [open, setOpen] = useState<boolean>(false);
 	const [company, setCompany] = useState<Company | null>(null);
 	const [companies, setCompanies] = useState<any[]>([]);
+	const [companyLogoColor, setCompanyLogoColor] = useState<string | null>(null);
 	const formMethods = useForm<FormData>();
 	const { register, handleSubmit, reset } = formMethods;
 
@@ -82,23 +86,20 @@ export default function AddJobListingButton() {
 		setOpen(false);
 	};
 
-	const mutation = useMutation({
+	const { mutate, isPending, isIdle, isSuccess, isError } = useMutation({
 		mutationFn: (data: RequestBody) =>
 			axios.post("http://localhost:8080/pipeline/add", data, {
 				withCredentials: true,
 			}),
-		onSuccess: (data) => console.log(data),
+		onSuccess: (data) =>
+			queryClient.setQueryData(["fetchJobs", { withCredentials: true }], data),
 		onError: (error) => console.log(error),
+		onSettled: () => queryClient.invalidateQueries({ queryKey: ["fetchJobs"] }),
 	});
 
-	const onSubmit = (data: FormData) => {
+	const onSubmit = async (data: FormData) => {
 		const { company, jobTitle, status, url, date } = data;
 		const statuses = status.split("-");
-		const img = new Image();
-		img.crossOrigin = "Anonymous";
-		img.src = company.logo;
-
-		img.addEventListener("load", () => {});
 
 		const requestBody: RequestBody = {
 			company: company.name,
@@ -107,12 +108,31 @@ export default function AddJobListingButton() {
 			date: date.format("YYYY-MM-DD"),
 			status: statuses[0],
 			substatus: statuses.length > 1 ? statuses[1] : null,
-			companyColor: rgbToHex(colorThief.getColor(img)),
+			companyColor: companyLogoColor,
 			companyURL: company.domain,
 		};
-		console.log(requestBody);
-		mutation.mutate(requestBody);
+		mutate(requestBody);
 	};
+
+	useEffect(() => {
+		if (isSuccess) {
+			setOpen(false);
+		}
+	}, [isSuccess]);
+
+	useEffect(() => {
+		if (company != null) {
+			const img = new Image();
+			img.crossOrigin = "Anonymous";
+			img.src = company.logo;
+
+			if (!img.complete) {
+				img.addEventListener("load", function () {
+					setCompanyLogoColor(rgbToHex(colorThief.getColor(img)));
+				});
+			}
+		}
+	}, [company]);
 
 	return (
 		<>
@@ -130,6 +150,14 @@ export default function AddJobListingButton() {
 						<Card sx={style}>
 							<CardHeader title="Add Job" sx={{ textAlign: "center" }} />
 							<CardContent sx={{ paddingX: 0 }}>
+								{isError && (
+									<Typography
+										variant="body2"
+										sx={{ fontStyle: "italic", m: 2 }}
+									>
+										Error saving job. Try again or report bug.
+									</Typography>
+								)}
 								<JobStatusDropdown />
 								<LocalizationProvider dateAdapter={AdapterMoment}>
 									<DatePickerElement
@@ -174,6 +202,7 @@ export default function AddJobListingButton() {
 									variant="contained"
 									startIcon={<DeleteIcon />}
 									onClick={onDiscard}
+									disabled={isPending}
 								>
 									Discard
 								</Button>
@@ -183,9 +212,22 @@ export default function AddJobListingButton() {
 									startIcon={<SaveIcon />}
 									type="submit"
 									onClick={handleSubmit(onSubmit)}
+									disabled={isPending}
 								>
 									Save Job
 								</Button>
+								{isPending && (
+									<CircularProgress
+										size={24}
+										sx={{
+											position: "absolute",
+											top: "50%",
+											left: "50%",
+											marginTop: "-12px",
+											marginLeft: "-12px",
+										}}
+									/>
+								)}
 							</CardActions>
 						</Card>
 					</FormProvider>

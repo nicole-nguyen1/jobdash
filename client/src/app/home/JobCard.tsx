@@ -16,18 +16,23 @@ export default function JobCard({ job }: Props) {
 				marginTop: "8px",
 			}}
 		>
-			<Grid container direction="row">
-				<Grid item sx={{ mr: 1 }}>
+			<Grid container direction="row" columns={8} sx={{ alignItems: "center" }}>
+				<Grid item sx={{ mr: 2 }} xs={1}>
 					<Avatar
 						src={`https://logo.clearbit.com/${job.companyURL}`}
-						sx={{ border: "2px solid white" }}
+						sx={{
+							border: "2px solid white",
+							width: 32,
+							height: 32,
+							backgroundColor: "white",
+						}}
 					/>
 				</Grid>
-				<Grid item>
-					<Typography variant="body1" sx={{ fontWeight: "bold" }}>
+				<Grid item xs={6}>
+					<Typography variant="body2" sx={{ fontWeight: "bold" }}>
 						{job.title}
 					</Typography>
-					<Typography variant="body2">{job.companyName}</Typography>
+					<Typography variant="subtitle2">{job.companyName}</Typography>
 				</Grid>
 			</Grid>
 		</Box>
