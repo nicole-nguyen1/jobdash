@@ -26,6 +26,8 @@ CREATE TABLE "jobs" (
 	"company_color" varchar NOT NULL,
 	"card_color" varchar,
 	"timeline_id" uuid NOT NULL,
+	"company_url" varchar,
+	"is_archived" boolean DEFAULT FALSE,
 	CONSTRAINT "jobs_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
@@ -51,8 +53,8 @@ CREATE TABLE "timelines" (
 );
 
 ALTER TABLE "jobs" ADD CONSTRAINT "jobs_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("id");
-ALTER TABLE "jobs" ADD CONSTRAINT "jobs_fk1" FOREIGN KEY ("timeline_id") REFERENCES "timelines"("id");
+ALTER TABLE "jobs" ADD CONSTRAINT "jobs_fk1" FOREIGN KEY ("timeline_id") REFERENCES "timelines"("id") ON DELETE CASCADE;
 
-ALTER TABLE "timeline_events" ADD CONSTRAINT "timeline_events_fk0" FOREIGN KEY ("timeline_id") REFERENCES "timelines"("id");
+ALTER TABLE "timeline_events" ADD CONSTRAINT "timeline_events_fk0" FOREIGN KEY ("timeline_id") REFERENCES "timelines"("id") ON DELETE CASCADE;
 
 ALTER TABLE "timelines" ADD CONSTRAINT "timelines_fk0" FOREIGN KEY ("user_id") REFERENCES "users"("id");

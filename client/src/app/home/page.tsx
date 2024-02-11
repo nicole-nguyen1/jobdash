@@ -3,7 +3,6 @@
 import { Container, Grid } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useState } from "react";
 import PipelineStage from "./PipelineStage";
 import { pipelineStatusConfig } from "./pipelineStatusTypes";
 
@@ -14,22 +13,23 @@ export type JobsPayload = {
 	currStatus: string;
 	cardColor: string;
 	companyURL: string;
+	timelineID: string;
+	lastUpdated: string;
 };
 
 export default function Home() {
 	const pipelineStages: Array<string> = Object.keys(pipelineStatusConfig);
-	const [jobs, setJobs] = useState<Array<JobsPayload>>([]);
 
 	const fetchJobs = async () => {
 		const result = await axios.get("http://localhost:8080/pipeline/", {
 			withCredentials: true,
 		});
-		setJobs(result.data);
+		return result.data;
 	};
 
-	const { data, error } = useQuery({
+	const { data } = useQuery({
 		queryKey: ["fetchJobs"],
-		queryFn: fetchJobs,
+		queryFn: () => fetchJobs(),
 	});
 
 	return (
@@ -39,7 +39,9 @@ export default function Home() {
 					<PipelineStage
 						key={stage}
 						stage={stage}
-						jobs={jobs.filter((job) => job.currStatus === stage)}
+						jobs={(data ?? []).filter(
+							(job: JobsPayload) => job.currStatus === stage
+						)}
 					/>
 				))}
 			</Grid>
