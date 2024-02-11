@@ -1,6 +1,7 @@
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
+import { LoadingButton } from "@mui/lab";
 import {
 	Box,
 	Button,
@@ -8,7 +9,6 @@ import {
 	CardActions,
 	CardContent,
 	CardHeader,
-	CircularProgress,
 	Divider,
 	FormControl,
 	Modal,
@@ -20,6 +20,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import ColorThief from "colorthief";
 import { Moment } from "moment";
 import { useEffect, useState } from "react";
@@ -142,8 +144,7 @@ export default function AddJobListingButton() {
 			<Modal
 				open={open}
 				onClose={() => setOpen(false)}
-				aria-labelledby="modal-modal-title"
-				aria-describedby="modal-modal-description"
+				aria-labelledby="modal-add-job-listing"
 			>
 				<Box>
 					<FormProvider {...formMethods}>
@@ -197,37 +198,27 @@ export default function AddJobListingButton() {
 								</FormControl>
 							</CardContent>
 							<CardActions sx={{ justifyContent: "end" }}>
-								<Button
+								<LoadingButton
 									size="small"
 									variant="contained"
 									startIcon={<DeleteIcon />}
 									onClick={onDiscard}
-									disabled={isPending}
+									loading={isPending}
+									loadingPosition="start"
 								>
-									Discard
-								</Button>
-								<Button
+									<span>Discard</span>
+								</LoadingButton>
+								<LoadingButton
 									size="small"
 									variant="contained"
 									startIcon={<SaveIcon />}
 									type="submit"
 									onClick={handleSubmit(onSubmit)}
-									disabled={isPending}
+									loading={isPending}
+									loadingPosition="start"
 								>
-									Save Job
-								</Button>
-								{isPending && (
-									<CircularProgress
-										size={24}
-										sx={{
-											position: "absolute",
-											top: "50%",
-											left: "50%",
-											marginTop: "-12px",
-											marginLeft: "-12px",
-										}}
-									/>
-								)}
+									<span>Save Job</span>
+								</LoadingButton>
 							</CardActions>
 						</Card>
 					</FormProvider>

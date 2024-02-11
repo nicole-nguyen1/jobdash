@@ -9,13 +9,13 @@ from pipeline import routes
 
 @bp.route('/', methods=["GET"])
 def get_jobs():
-  email = session.get('username')
-  (user, cursor, conn) = find_user(['id'], email, False)
+  (user, cursor, conn) = find_user(['id'],False)
 
   query = """
-    SELECT id, title, company_name, curr_status, company_color, card_color, company_url from jobs
-    WHERE user_id = \'{0}\'
-    GROUP BY id, curr_status
+    SELECT jobs.id, jobs.title, jobs.company_name, jobs.curr_status, jobs.company_color, jobs.card_color, jobs.company_url, timeline_events.timeline_id, MAX(timeline_events.date) AS "latest_update" from jobs
+    INNER JOIN timeline_events ON timeline_events.timeline_id=jobs.timeline_id
+    WHERE user_id = \'{0}\' AND is_archived = FALSE
+    GROUP BY jobs.id, timeline_events.timeline_id
   """
   cursor.execute(query.format(user[0]))
   jobs = cursor.fetchall()
@@ -28,7 +28,9 @@ def get_jobs():
       'companyName': job[2],
       'currStatus': job[3],
       'cardColor': job[5] if job[5] is not None else job[4],
-      'companyURL': job[6]
+      'companyURL': job[6],
+      'timelineID': job[7],
+      'lastUpdated': job[8]
     })
 
   cursor.close()

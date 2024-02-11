@@ -1,7 +1,7 @@
 "use client";
 
 import { Container, Grid } from "@mui/material";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import PipelineStage from "./PipelineStage";
 import { pipelineStatusConfig } from "./pipelineStatusTypes";
@@ -13,10 +13,11 @@ export type JobsPayload = {
 	currStatus: string;
 	cardColor: string;
 	companyURL: string;
+	timelineID: string;
+	lastUpdated: string;
 };
 
 export default function Home() {
-	const queryClient = useQueryClient();
 	const pipelineStages: Array<string> = Object.keys(pipelineStatusConfig);
 
 	const fetchJobs = async () => {
@@ -30,8 +31,6 @@ export default function Home() {
 		queryKey: ["fetchJobs"],
 		queryFn: () => fetchJobs(),
 	});
-
-	console.log(queryClient.getQueryData(["fetchJobs"]));
 
 	return (
 		<Container maxWidth="xl" sx={{ mt: 4, mb: 4, height: "100%" }}>

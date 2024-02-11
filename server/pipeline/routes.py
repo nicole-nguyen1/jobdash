@@ -1,14 +1,13 @@
 from auth.utils import find_user
 from flask import jsonify, request, session
+from markupsafe import escape
 from pipeline import bp
 
 
-# TODO when clicking save job, disable buttons in loading state, close modal, update pipeline view
 @bp.route("/add", methods=['POST'])
 def add_job():
   data = request.get_json()
-  email = session.get('username')
-  (user, cursor, conn) = find_user(['id'], email, False)
+  (user, cursor, conn) = find_user(['id'], False)
 
   if (user is None):
     return jsonify({}), 401
@@ -62,3 +61,76 @@ def add_job():
     return jsonify({'event': 'JOB_CREATION_FAILED'})
   else:
     return jsonify({'event': 'JOB_CREATION_SUCCESS'})
+
+@bp.route('/archive', methods=['POST'])
+def archive_job():
+  job_id = request.args.get('job_id')
+  (user, cursor, conn) = find_user(['id'], False)
+
+  if (user is not None):
+    safe_job_id = escape(job_id)
+
+    update_query = """
+      UPDATE jobs
+      SET is_archived = true
+      WHERE id = \'{0}\'
+      RETURNING id, is_archived
+    """
+
+    cursor.execute(update_query.format(safe_job_id))
+    job = cursor.fetchone()
+
+    if (job[0] is None or job[1] is False):
+      event = 'JOB_NOT_ARCHIVED'
+      event_code = 500
+    elif (job[0] is not None and job[1] is True):
+      conn.commit()
+      event = 'JOB_ARCHIVED'
+      event_code = 200
+  else:
+    event = 'UNAUTHORIZED_TO_ARCHIVE'
+    event_code = 401
+
+  cursor.close()
+  conn.close()
+
+  return jsonify({'event': event}, event_code)
+
+
+@bp.route('/delete', methods=['POST'])
+def delete_job():
+  job_id = request.args.get('job_id')
+  (user, cursor, conn) = find_user(['id'], False)
+
+  if (user is not None):
+    safe_job_id = escape(job_id)
+
+    delete_query = """
+      DELETE FROM jobs
+      WHERE id = \'{0}\'
+      RETURNING id
+    """
+    cursor.execute(delete_query.format(safe_job_id))
+    count = cursor.rowcount
+    if (count == 0):
+      event = 'JOB_NOT_DELETED'
+      event_code = 500
+    elif (count == 1):
+      conn.commit()
+      event = 'JOB_DELETED'
+      event_code = 200
+  else:
+    event = 'UNAUTHORIZED_TO_DELETE'
+    event_code = 401
+
+  cursor.close()
+  conn.close()
+
+  return jsonify({'event': event}, event_code)
+
+
+
+
+
+
+

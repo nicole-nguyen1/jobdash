@@ -7,8 +7,7 @@ from flask import jsonify, request, session
 # home route
 @bp.route("/session", methods=['GET'])
 def home():
-  email = session.get('username')
-  user = find_user(['id'], email, True)
+  user = find_user(['id'], True)
   if (user is None):
     return jsonify({}), 401
   else:
@@ -22,7 +21,7 @@ def signup():
   email = data['email']
 
   # check if user currently exists
-  (user, cursor, conn) = find_user(['id'], email, False)
+  (user, cursor, conn) = find_user(['id'], False, email)
 
   # if user does not exist, add to db
   if (user is None):
@@ -53,7 +52,7 @@ def login():
   password = data['password']
 
   # find user
-  user = find_user(['id', 'password'], email, True)
+  user = find_user(['id', 'password'], True, email)
 
   event = 'USER_LOGIN_FAILED'
   if (user is not None):
