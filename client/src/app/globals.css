@@ -31,3 +31,12 @@ body {
     text-wrap: balance;
   }
 } */
+
+
+.ql-toolbar {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.ql-editor {
+  min-height: 100px;
+}

@@ -1,3 +1,6 @@
+import CardColorPicker from "@/components/form/CardColorPicker";
+import FormSubmitButtons from "@/components/form/FormSubmitButtons";
+import JobDashQuill from "@/components/form/JobDashQuill";
 import {
 	Avatar,
 	Dialog,
@@ -15,8 +18,14 @@ import moment, { Moment } from "moment";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { DatePickerElement } from "react-hook-form-mui";
-import CompanyAutocomplete, { Company } from "./CompanyAutocomplete";
-import JobStatusDropdown from "./JobStatusDropdown";
+import "react-quill/dist/quill.snow.css";
+import CompanyAutocomplete, {
+	Company,
+} from "../../components/form/CompanyAutocomplete";
+import JobStatusDropdown from "../../components/form/JobStatusDropdown";
+import WorkingModelDropdown, {
+	WorkingModel,
+} from "../../components/form/WorkingModelDropdown";
 import { JobsPayload } from "./page";
 
 type FormData = {
@@ -25,6 +34,11 @@ type FormData = {
 	url: string;
 	status: string;
 	date: Moment;
+	salary: string;
+	location: string;
+	workingModel: WorkingModel;
+	color: string;
+	description: string;
 };
 
 const formFieldProps: TextFieldProps = {
@@ -37,18 +51,6 @@ const formFieldProps: TextFieldProps = {
 	sx: { mb: 1 },
 };
 
-const style = {
-	position: "absolute" as "absolute",
-	top: "50%",
-	left: "50%",
-	transform: "translate(-50%, -50%)",
-	width: 600,
-	bgcolor: "background.paper",
-	border: "2px solid #000",
-	boxShadow: 24,
-	p: 4,
-};
-
 type Props = {
 	job: JobsPayload;
 	open: boolean;
@@ -57,11 +59,8 @@ type Props = {
 
 export default function JobCardDetail({ job, open, setOpen }: Props) {
 	const [company, setCompany] = useState<Company | null>(null);
-	const [companies, setCompanies] = useState<any[]>([]);
-	const [companyLogoColor, setCompanyLogoColor] = useState<string | null>(null);
-	const [date, setDate] = useState<Moment | undefined>(moment(job.lastUpdated));
 	const formMethods = useForm<FormData>();
-	const { register, handleSubmit, reset } = formMethods;
+	const { register, handleSubmit } = formMethods;
 
 	useEffect(() => {
 		axios
@@ -105,7 +104,7 @@ export default function JobCardDetail({ job, open, setOpen }: Props) {
 					</Grid>
 				</Grid>
 			</DialogTitle>
-			<DialogContent sx={{ overflowY: "visible", width: "500px" }}>
+			<DialogContent sx={{ overflowY: "visible", width: "600px" }}>
 				<FormProvider {...formMethods}>
 					<Grid container direction="column" rowGap={1}>
 						<Grid
@@ -156,16 +155,77 @@ export default function JobCardDetail({ job, open, setOpen }: Props) {
 											size: "small",
 											required: true,
 											fullWidth: true,
-											...register("date", { value: date }),
+											...register("date", { value: moment(job.lastUpdated) }),
 										}}
 										sx={{ mt: 1 }}
 									/>
 								</LocalizationProvider>
 							</Grid>
 						</Grid>
+						<Grid
+							container
+							item
+							direction="row"
+							columns={12}
+							spacing={2}
+							alignItems="center"
+						>
+							<Grid item xs={9}>
+								<TextField
+									id="url"
+									label="Job Listing URL"
+									{...formFieldProps}
+									{...register("url")}
+								/>
+							</Grid>
+							<Grid item xs={3}>
+								<CardColorPicker
+									currCardColor={job.cardColor}
+									textFieldProps={formFieldProps}
+								/>
+							</Grid>
+						</Grid>
+						<Grid
+							container
+							item
+							direction="row"
+							columns={12}
+							spacing={2}
+							alignItems="center"
+						>
+							<Grid item xs={4}>
+								<TextField
+									id="location"
+									label="Location"
+									{...formFieldProps}
+									{...register("location")}
+								/>
+							</Grid>
+							<Grid item xs={4}>
+								<TextField
+									id="salary"
+									label="Salary"
+									type="number"
+									{...formFieldProps}
+									{...register("salary")}
+								/>
+							</Grid>
+							<Grid item xs={4}>
+								<WorkingModelDropdown />
+							</Grid>
+						</Grid>
+						<Typography variant="caption" sx={{ ml: 1 }}>
+							Notes
+						</Typography>
+						<JobDashQuill />
 					</Grid>
 				</FormProvider>
 			</DialogContent>
+			<FormSubmitButtons
+				onDiscard={() => {}}
+				onSubmit={() => {}}
+				isPending={false}
+			/>
 		</Dialog>
 	);
 }

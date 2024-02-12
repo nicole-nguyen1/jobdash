@@ -35,7 +35,13 @@ export default function Home() {
 
 	return (
 		<Container maxWidth="xl" sx={{ mt: 4, mb: 4, height: "100%" }}>
-			<Grid container direction="row" columnSpacing={4} columns={12}>
+			<Grid
+				container
+				direction="row"
+				columnSpacing={1}
+				columns={12}
+				sx={{ flexWrap: "nowrap" }}
+			>
 				{pipelineStages.map((stage) => (
 					<PipelineStage
 						key={stage}

@@ -1,11 +1,8 @@
+import FormSubmitButtons from "@/components/form/FormSubmitButtons";
 import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SaveIcon from "@mui/icons-material/Save";
-import { LoadingButton } from "@mui/lab";
 import {
 	Button,
 	Dialog,
-	DialogActions,
 	DialogContent,
 	DialogTitle,
 	Divider,
@@ -26,9 +23,11 @@ import { Moment } from "moment";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { DatePickerElement } from "react-hook-form-mui";
+import CompanyAutocomplete, {
+	Company,
+} from "../../components/form/CompanyAutocomplete";
+import JobStatusDropdown from "../../components/form/JobStatusDropdown";
 import rgbToHex from "../utils/rgbToHex";
-import CompanyAutocomplete, { Company } from "./CompanyAutocomplete";
-import JobStatusDropdown from "./JobStatusDropdown";
 
 type FormData = {
 	company: Company;
@@ -187,29 +186,11 @@ export default function AddJobListingButton() {
 						</Grid>
 					</FormProvider>
 				</DialogContent>
-				<DialogActions>
-					<LoadingButton
-						size="small"
-						variant="contained"
-						startIcon={<DeleteIcon />}
-						onClick={onDiscard}
-						loading={isPending}
-						loadingPosition="start"
-					>
-						<span>Discard</span>
-					</LoadingButton>
-					<LoadingButton
-						size="small"
-						variant="contained"
-						startIcon={<SaveIcon />}
-						type="submit"
-						onClick={handleSubmit(onSubmit)}
-						loading={isPending}
-						loadingPosition="start"
-					>
-						<span>Save Job</span>
-					</LoadingButton>
-				</DialogActions>
+				<FormSubmitButtons
+					onDiscard={onDiscard}
+					onSubmit={handleSubmit(onSubmit)}
+					isPending={isPending}
+				/>
 			</Dialog>
 		</>
 	);
