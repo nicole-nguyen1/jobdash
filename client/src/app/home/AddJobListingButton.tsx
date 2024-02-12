@@ -112,8 +112,7 @@ export default function AddJobListingButton() {
 			companyColor: companyLogoColor,
 			companyURL: company.domain,
 		};
-		console.log({ data, requestBody });
-		// mutate(requestBody);
+		mutate(requestBody);
 	};
 
 	useEffect(() => {

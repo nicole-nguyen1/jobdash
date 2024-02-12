@@ -1,6 +1,6 @@
 import { Avatar, Box, Grid, Typography } from "@mui/material";
 import moment from "moment";
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import DeleteJobListingButton from "./DeleteJobListingButton";
 import JobCardDetail from "./JobCardDetail";
 import { JobsPayload } from "./page";
@@ -89,15 +89,13 @@ export default function JobCard({ job }: Props) {
 					</Grid>
 				</Grid>
 			</Box>
-			<Suspense fallback={<p>Loading...</p>}>
-				{openJobDetail && (
-					<JobCardDetail
-						job={job}
-						open={openJobDetail}
-						setOpen={setOpenJobDetail}
-					/>
-				)}
-			</Suspense>
+			{openJobDetail && (
+				<JobCardDetail
+					job={job}
+					open={openJobDetail}
+					setOpen={setOpenJobDetail}
+				/>
+			)}
 		</>
 	);
 }
