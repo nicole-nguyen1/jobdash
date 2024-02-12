@@ -11,6 +11,7 @@ import {
 	CardHeader,
 	Divider,
 	FormControl,
+	Grid,
 	Modal,
 	TextField,
 	TextFieldProps,
@@ -113,7 +114,8 @@ export default function AddJobListingButton() {
 			companyColor: companyLogoColor,
 			companyURL: company.domain,
 		};
-		mutate(requestBody);
+		console.log({ data, requestBody });
+		// mutate(requestBody);
 	};
 
 	useEffect(() => {
@@ -159,43 +161,42 @@ export default function AddJobListingButton() {
 										Error saving job. Try again or report bug.
 									</Typography>
 								)}
-								<JobStatusDropdown />
-								<LocalizationProvider dateAdapter={AdapterMoment}>
-									<DatePickerElement
-										label="Date"
-										name="date"
-										required
-										inputProps={{
-											InputLabelProps: { shrink: true },
-											size: "small",
-											required: true,
-											fullWidth: true,
-										}}
-										sx={{ mt: 1 }}
-									/>
-								</LocalizationProvider>
-								<Divider sx={{ margin: "16px 0" }} />
-								<FormControl sx={{ width: "100%", padding: "4px" }}>
-									<TextField
-										id="url"
-										label="Import from Job Listing URL"
-										{...formFieldProps}
-										{...register("url")}
-									/>
-									<Divider>or</Divider>
-									<CompanyAutocomplete
-										company={company}
-										companies={companies}
-										setCompany={setCompany}
-										setCompanies={setCompanies}
-									/>
-									<TextField
-										id="jobTitle"
-										label="Job Title"
-										{...formFieldProps}
-										{...register("jobTitle")}
-									/>
-								</FormControl>
+								<Grid container direction="column" rowGap={2}>
+									<JobStatusDropdown />
+									<LocalizationProvider dateAdapter={AdapterMoment}>
+										<DatePickerElement
+											label="Date"
+											name="date"
+											required
+											inputProps={{
+												InputLabelProps: { shrink: true },
+												size: "small",
+												required: true,
+												fullWidth: true,
+												...register("date"),
+											}}
+										/>
+									</LocalizationProvider>
+									<Divider />
+									<FormControl sx={{ width: "100%" }}>
+										<Grid container direction="column" rowGap={1}>
+											<TextField
+												id="url"
+												label="Import from Job Listing URL"
+												{...formFieldProps}
+												{...register("url")}
+											/>
+											<Divider sx={{ padding: "4px" }}>or</Divider>
+											<CompanyAutocomplete />
+											<TextField
+												id="jobTitle"
+												label="Job Title"
+												{...formFieldProps}
+												{...register("jobTitle")}
+											/>
+										</Grid>
+									</FormControl>
+								</Grid>
 							</CardContent>
 							<CardActions sx={{ justifyContent: "end" }}>
 								<LoadingButton

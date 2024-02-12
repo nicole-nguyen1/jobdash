@@ -11,6 +11,7 @@ export type JobsPayload = {
 	title: string;
 	companyName: string;
 	currStatus: string;
+	substatus: string;
 	cardColor: string;
 	companyURL: string;
 	timelineID: string;

@@ -6,7 +6,7 @@ import {
 	Select,
 	SelectChangeEvent,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { pipelineStatusConfig } from "./pipelineStatusTypes";
 
@@ -21,7 +21,11 @@ const MenuProps = {
 	},
 };
 
-export default function JobStatusDropdown() {
+type Props = {
+	loadedStatus?: string;
+};
+
+export default function JobStatusDropdown({ loadedStatus = "" }: Props) {
 	const [status, setStatus] = useState<string>("");
 	const { register } = useFormContext();
 
@@ -30,6 +34,12 @@ export default function JobStatusDropdown() {
 	};
 
 	const droplistItems = getDroplistItems(status);
+
+	useEffect(() => {
+		if (loadedStatus != null && loadedStatus.length > 0) {
+			setStatus(loadedStatus);
+		}
+	}, [loadedStatus]);
 
 	return (
 		<FormControl required sx={{ width: "100%" }}>
@@ -47,7 +57,6 @@ export default function JobStatusDropdown() {
 				value={status}
 				label="Status"
 				size="small"
-				sx={{ mb: 1 }}
 				fullWidth
 				notched
 				MenuProps={MenuProps}

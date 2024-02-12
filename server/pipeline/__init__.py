@@ -12,10 +12,20 @@ def get_jobs():
   (user, cursor, conn) = find_user(['id'],False)
 
   query = """
-    SELECT jobs.id, jobs.title, jobs.company_name, jobs.curr_status, jobs.company_color, jobs.card_color, jobs.company_url, timeline_events.timeline_id, MAX(timeline_events.date) AS "latest_update" from jobs
+    SELECT
+      jobs.id,
+      jobs.title,
+      jobs.company_name,
+      jobs.curr_status,
+      jobs.company_color,
+      jobs.card_color,
+      jobs.company_url,
+      timeline_events.timeline_id,
+      timeline_events.substatus,
+      MAX(timeline_events.date) AS "latest_update" from jobs
     INNER JOIN timeline_events ON timeline_events.timeline_id=jobs.timeline_id
     WHERE user_id = \'{0}\' AND is_archived = FALSE
-    GROUP BY jobs.id, timeline_events.timeline_id
+    GROUP BY jobs.id, timeline_events.timeline_id, timeline_events.substatus
   """
   cursor.execute(query.format(user[0]))
   jobs = cursor.fetchall()
@@ -30,7 +40,8 @@ def get_jobs():
       'cardColor': job[5] if job[5] is not None else job[4],
       'companyURL': job[6],
       'timelineID': job[7],
-      'lastUpdated': job[8]
+      'substatus': job[8],
+      'lastUpdated': job[9]
     })
 
   cursor.close()
