@@ -105,7 +105,7 @@ export default function JobCardDetail({ job, open, setOpen }: Props) {
 					</Grid>
 				</Grid>
 			</DialogTitle>
-			<DialogContent sx={{ overflowY: "visible" }}>
+			<DialogContent sx={{ overflowY: "visible", width: "500px" }}>
 				<FormProvider {...formMethods}>
 					<Grid container direction="column" rowGap={1}>
 						<Grid
@@ -166,28 +166,6 @@ export default function JobCardDetail({ job, open, setOpen }: Props) {
 					</Grid>
 				</FormProvider>
 			</DialogContent>
-			{/* <DialogActions>
-					<LoadingButton
-						variant="contained"
-						onClick={onArchive}
-						loading={archiveMutation.isPending || deleteMutation.isPending}
-					>
-						<span>Archive</span>
-					</LoadingButton>
-					<LoadingButton
-						variant="contained"
-						onClick={onDelete}
-						loading={archiveMutation.isPending || deleteMutation.isPending}
-					>
-						<span>Delete</span>
-					</LoadingButton>
-					<LoadingButton
-						onClick={() => setOpen(false)}
-						loading={archiveMutation.isPending || deleteMutation.isPending}
-					>
-						<span>Cancel</span>
-					</LoadingButton>
-				</DialogActions> */}
 		</Dialog>
 	);
 }

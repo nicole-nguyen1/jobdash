@@ -3,16 +3,14 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import { LoadingButton } from "@mui/lab";
 import {
-	Box,
 	Button,
-	Card,
-	CardActions,
-	CardContent,
-	CardHeader,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
 	Divider,
 	FormControl,
 	Grid,
-	Modal,
 	TextField,
 	TextFieldProps,
 	Typography,
@@ -143,88 +141,77 @@ export default function AddJobListingButton() {
 			<Button variant="contained" fullWidth onClick={() => setOpen(true)}>
 				<AddIcon />
 			</Button>
-			<Modal
-				open={open}
-				onClose={() => setOpen(false)}
-				aria-labelledby="modal-add-job-listing"
-			>
-				<Box>
+			<Dialog open={open} onClose={() => setOpen(false)}>
+				<DialogTitle>Add Job</DialogTitle>
+				<DialogContent sx={{ overflowY: "visible", width: "500px" }}>
+					{isError && (
+						<Typography variant="body2" sx={{ fontStyle: "italic", m: 2 }}>
+							Error saving job. Try again or report bug.
+						</Typography>
+					)}
 					<FormProvider {...formMethods}>
-						<Card sx={style}>
-							<CardHeader title="Add Job" sx={{ textAlign: "center" }} />
-							<CardContent sx={{ paddingX: 0 }}>
-								{isError && (
-									<Typography
-										variant="body2"
-										sx={{ fontStyle: "italic", m: 2 }}
-									>
-										Error saving job. Try again or report bug.
-									</Typography>
-								)}
-								<Grid container direction="column" rowGap={2}>
-									<JobStatusDropdown />
-									<LocalizationProvider dateAdapter={AdapterMoment}>
-										<DatePickerElement
-											label="Date"
-											name="date"
-											required
-											inputProps={{
-												InputLabelProps: { shrink: true },
-												size: "small",
-												required: true,
-												fullWidth: true,
-												...register("date"),
-											}}
-										/>
-									</LocalizationProvider>
-									<Divider />
-									<FormControl sx={{ width: "100%" }}>
-										<Grid container direction="column" rowGap={1}>
-											<TextField
-												id="url"
-												label="Import from Job Listing URL"
-												{...formFieldProps}
-												{...register("url")}
-											/>
-											<Divider sx={{ padding: "4px" }}>or</Divider>
-											<CompanyAutocomplete />
-											<TextField
-												id="jobTitle"
-												label="Job Title"
-												{...formFieldProps}
-												{...register("jobTitle")}
-											/>
-										</Grid>
-									</FormControl>
+						<Grid container direction="column" rowGap={2}>
+							<JobStatusDropdown />
+							<LocalizationProvider dateAdapter={AdapterMoment}>
+								<DatePickerElement
+									label="Date"
+									name="date"
+									required
+									inputProps={{
+										InputLabelProps: { shrink: true },
+										size: "small",
+										required: true,
+										fullWidth: true,
+										...register("date"),
+									}}
+								/>
+							</LocalizationProvider>
+							<Divider />
+							<FormControl sx={{ width: "100%" }}>
+								<Grid container direction="column" rowGap={1}>
+									<TextField
+										id="url"
+										label="Import from Job Listing URL"
+										{...formFieldProps}
+										{...register("url")}
+									/>
+									<Divider sx={{ padding: "4px" }}>or</Divider>
+									<CompanyAutocomplete />
+									<TextField
+										id="jobTitle"
+										label="Job Title"
+										{...formFieldProps}
+										{...register("jobTitle")}
+									/>
 								</Grid>
-							</CardContent>
-							<CardActions sx={{ justifyContent: "end" }}>
-								<LoadingButton
-									size="small"
-									variant="contained"
-									startIcon={<DeleteIcon />}
-									onClick={onDiscard}
-									loading={isPending}
-									loadingPosition="start"
-								>
-									<span>Discard</span>
-								</LoadingButton>
-								<LoadingButton
-									size="small"
-									variant="contained"
-									startIcon={<SaveIcon />}
-									type="submit"
-									onClick={handleSubmit(onSubmit)}
-									loading={isPending}
-									loadingPosition="start"
-								>
-									<span>Save Job</span>
-								</LoadingButton>
-							</CardActions>
-						</Card>
+							</FormControl>
+						</Grid>
 					</FormProvider>
-				</Box>
-			</Modal>
+				</DialogContent>
+				<DialogActions>
+					<LoadingButton
+						size="small"
+						variant="contained"
+						startIcon={<DeleteIcon />}
+						onClick={onDiscard}
+						loading={isPending}
+						loadingPosition="start"
+					>
+						<span>Discard</span>
+					</LoadingButton>
+					<LoadingButton
+						size="small"
+						variant="contained"
+						startIcon={<SaveIcon />}
+						type="submit"
+						onClick={handleSubmit(onSubmit)}
+						loading={isPending}
+						loadingPosition="start"
+					>
+						<span>Save Job</span>
+					</LoadingButton>
+				</DialogActions>
+			</Dialog>
 		</>
 	);
 }

@@ -43,7 +43,6 @@ export default function JobCard({ job }: Props) {
 				}}
 				onMouseEnter={() => setShowDeleteButton(true)}
 				onMouseLeave={() => setShowDeleteButton(false)}
-				onClick={() => setOpenJobDetail(true)}
 			>
 				<Grid
 					container
@@ -51,22 +50,32 @@ export default function JobCard({ job }: Props) {
 					columns={12}
 					sx={{ alignItems: "center", justifyContent: "space-between" }}
 				>
-					<Grid item sx={{ mr: 2 }} xs={1}>
-						<Avatar
-							src={`https://logo.clearbit.com/${job.companyURL}`}
-							sx={{
-								border: "2px solid white",
-								width: 24,
-								height: 24,
-								backgroundColor: "white",
-							}}
-						/>
-					</Grid>
-					<Grid item xs={8}>
-						<Typography variant="body2" sx={{ fontWeight: "bold" }}>
-							{job.title}
-						</Typography>
-						<Typography variant="subtitle2">{job.companyName}</Typography>
+					<Grid
+						container
+						item
+						direction="row"
+						xs={10}
+						columnGap={1}
+						onClick={() => setOpenJobDetail(true)}
+						sx={{ alignItems: "center" }}
+					>
+						<Grid item sx={{ mr: 2 }} xs={1}>
+							<Avatar
+								src={`https://logo.clearbit.com/${job.companyURL}`}
+								sx={{
+									border: "2px solid white",
+									width: 24,
+									height: 24,
+									backgroundColor: "white",
+								}}
+							/>
+						</Grid>
+						<Grid item xs={9}>
+							<Typography variant="body2" sx={{ fontWeight: "bold" }}>
+								{job.title}
+							</Typography>
+							<Typography variant="subtitle2">{job.companyName}</Typography>
+						</Grid>
 					</Grid>
 					<Grid container item xs={1} direction="column">
 						<Grid item sx={{ height: 20 }}>
