@@ -49,7 +49,7 @@ def add_timeline_event():
                  'VALUES (%s, %s, %s, %s) RETURNING id',
                  (safe_timeline_id, date, status, substatus))
   event = cursor.fetchone()
-  print(event)
+
   if (event is None):
     return jsonify({'event': 'TIMELINE_EVENT_CREATION_FAILED'})
 
@@ -88,7 +88,6 @@ def update_job():
       safe_event_id,
     ))
     event = cursor.fetchone()
-    print(event)
 
     if (event is None):
       event = 'TIMELINE_EVENT_NOT_UPDATED'
@@ -120,7 +119,6 @@ def delete_job():
       RETURNING id
     """
     cursor.execute(delete_query.format(safe_event_id))
-    print(cursor.fetchall())
     count = cursor.rowcount
     if (count == 0):
       event = 'TIMELINE_EVENT_NOT_DELETED'

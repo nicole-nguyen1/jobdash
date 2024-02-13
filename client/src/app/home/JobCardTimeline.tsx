@@ -24,8 +24,6 @@ export default function JobCardTimeline({ timelineID }: Props) {
 		queryFn: () => fetchTimeline(),
 	});
 
-	console.log(data);
-
 	return (
 		<Grid
 			container

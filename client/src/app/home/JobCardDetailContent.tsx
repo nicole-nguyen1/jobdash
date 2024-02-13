@@ -51,18 +51,6 @@ export default function JobCardDetailContent({
 	company,
 	setCompany,
 }: Props) {
-	// const formMethods = useForm<JobDetailFormData>({
-	// 	defaultValues: {
-	// 		company: company != null ? company : {},
-	// 		jobTitle: job.title,
-	// 		url: job.url ?? "",
-	// 		color: job.card_color ?? job.company_color,
-	// 		location: job.location ?? "",
-	// 		salary: job.salary ?? undefined,
-	// 		description: job.description ?? "",
-	// 		workingModel: job.working_model ?? undefined,
-	// 	},
-	// });
 	const formMethods = useFormContext();
 	const { register, setValue } = formMethods;
 
