@@ -1,28 +1,9 @@
 import { Avatar, Box, Grid, Typography } from "@mui/material";
-import moment from "moment";
 import { useState } from "react";
+import { timeFromNow } from "../utils/timeFromNow";
 import DeleteJobListingButton from "./DeleteJobListingButton";
 import JobCardDetail from "./JobCardDetail";
 import { JobsPayload } from "./page";
-
-moment.updateLocale("en", {
-	relativeTime: {
-		future: "in %s",
-		past: "%s",
-		s: "s",
-		ss: "%ss",
-		m: "m",
-		mm: "%dm",
-		h: "h",
-		hh: "%dh",
-		d: "d",
-		dd: "%dd",
-		M: "mo",
-		MM: "%dM",
-		y: "y",
-		yy: "%dY",
-	},
-});
 
 type Props = {
 	job: JobsPayload;
@@ -83,7 +64,7 @@ export default function JobCard({ job }: Props) {
 						</Grid>
 						<Grid item>
 							<Typography variant="caption">
-								{moment(job.latest_update).fromNow(true)}
+								{timeFromNow(job.latest_update)}
 							</Typography>
 						</Grid>
 					</Grid>

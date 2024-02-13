@@ -40,6 +40,8 @@ export default function Home() {
 		queryFn: () => fetchJobs(),
 	});
 
+	console.log(data);
+
 	return (
 		<Container maxWidth="xl" sx={{ mt: 4, mb: 4, height: "100%" }}>
 			<Grid
