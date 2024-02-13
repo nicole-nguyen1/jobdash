@@ -4,11 +4,13 @@ import { CirclePicker } from "react-color";
 import { useFormContext } from "react-hook-form";
 
 type Props = {
+	companyColor: string;
 	currCardColor: string;
 	textFieldProps: TextFieldProps;
 };
 
 export default function CardColorPicker({
+	companyColor,
 	currCardColor,
 	textFieldProps,
 }: Props) {
@@ -68,8 +70,8 @@ export default function CardColorPicker({
 					variant="contained"
 					sx={{ mt: 2 }}
 					onClick={() => {
-						setColor(currCardColor);
-						setValue("color", currCardColor);
+						setColor(companyColor);
+						setValue("color", companyColor);
 					}}
 				>
 					Reset to company color

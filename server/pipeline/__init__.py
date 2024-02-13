@@ -13,37 +13,29 @@ def get_jobs():
 
   query = """
     SELECT
-      jobs.*,
+      jobs.id,
+      jobs.title,
+      jobs.company_name,
+      jobs.company_url,
+      jobs.curr_status,
+      jobs.company_color,
+      jobs.card_color,
+      jobs.url,
+      jobs.salary,
+      jobs.location,
+      jobs.working_model,
+      jobs.description,
+      jobs.timeline_id,
       timeline_events.substatus,
       MAX(timeline_events.date) AS "latest_update" from jobs
     INNER JOIN timeline_events ON timeline_events.timeline_id=jobs.timeline_id
     WHERE user_id = \'{0}\' AND is_archived = FALSE
     GROUP BY jobs.id, timeline_events.timeline_id, timeline_events.substatus
   """
-  cursor.execute(query.format(user[0]))
+  cursor.execute(query.format(user['id']))
   jobs = cursor.fetchall()
-  payload = []
-
-  for job in jobs:
-    payload.append({
-      'id': job[0],
-      'title': job[2],
-      'companyName': job[3],
-      'currStatus': job[4],
-      'url': job[5],
-      'salary': job[6],
-      'location': job[7],
-      'workingModel': job[8],
-      'description': job[9],
-      'companyColor': job[10],
-      'cardColor': job[11],
-      'timelineID': job[12],
-      'companyURL': job[13],
-      'substatus': job[15],
-      'lastUpdated': job[16]
-    })
 
   cursor.close()
   conn.close()
 
-  return jsonify(payload)
+  return jsonify(jobs)
