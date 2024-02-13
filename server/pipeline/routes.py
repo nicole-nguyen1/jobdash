@@ -2,7 +2,7 @@ from auth.utils import find_user
 from flask import jsonify, request, session
 from markupsafe import escape
 from pipeline import bp
-from pipeline.utils import convertToStringOrNull
+from pipeline.utils import convertToIntOrNull, convertToStringOrNull
 
 
 @bp.route("/add", methods=['POST'])
@@ -143,7 +143,8 @@ def update_job():
     title = data['jobTitle']
     url = data['url']
     card_color = data['cardColor']
-    salary = data['salary']
+    min_salary = data['minSalary']
+    max_salary = data['maxSalary']
     location = data['location']
     working_model = data['workingModel']
     description = data['description']
@@ -155,11 +156,12 @@ def update_job():
           title = \'{2}\',
           url = {3},
           card_color = {4},
-          salary = {5},
-          location = {6},
-          working_model = {7},
-          description = {8}
-      WHERE id = \'{9}\'
+          min_salary = {5},
+          max_salary = {6},
+          location = {7},
+          working_model = {8},
+          description = {9}
+      WHERE id = \'{10}\'
       RETURNING *
     """
 
@@ -169,7 +171,8 @@ def update_job():
       title,
       convertToStringOrNull(url),
       convertToStringOrNull(card_color),
-      salary,
+      convertToIntOrNull(min_salary),
+      convertToIntOrNull(max_salary),
       convertToStringOrNull(location),
       convertToStringOrNull(working_model),
       convertToStringOrNull(description),

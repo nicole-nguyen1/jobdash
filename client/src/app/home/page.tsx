@@ -20,7 +20,8 @@ export type JobsPayload = {
 	latest_update: string;
 	url: string;
 	location: string | null;
-	salary: number | null;
+	min_salary: number | null;
+	max_salary: number | null;
 	working_model: WorkingModel | null;
 	description: string | null;
 };
