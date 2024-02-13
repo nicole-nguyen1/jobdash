@@ -1,11 +1,8 @@
+import FormSubmitButtons from "@/components/form/FormSubmitButtons";
 import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SaveIcon from "@mui/icons-material/Save";
-import { LoadingButton } from "@mui/lab";
 import {
 	Button,
 	Dialog,
-	DialogActions,
 	DialogContent,
 	DialogTitle,
 	Divider,
@@ -13,7 +10,6 @@ import {
 	Grid,
 	TextField,
 	TextFieldProps,
-	Typography,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
@@ -26,9 +22,11 @@ import { Moment } from "moment";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { DatePickerElement } from "react-hook-form-mui";
+import CompanyAutocomplete, {
+	Company,
+} from "../../components/form/CompanyAutocomplete";
+import JobStatusDropdown from "../../components/form/JobStatusDropdown";
 import rgbToHex from "../utils/rgbToHex";
-import CompanyAutocomplete, { Company } from "./CompanyAutocomplete";
-import JobStatusDropdown from "./JobStatusDropdown";
 
 type FormData = {
 	company: Company;
@@ -87,7 +85,7 @@ export default function AddJobListingButton() {
 		setOpen(false);
 	};
 
-	const { mutate, isPending, isIdle, isSuccess, isError } = useMutation({
+	const { mutate, isPending, isSuccess, isError } = useMutation({
 		mutationFn: (data: RequestBody) =>
 			axios.post("http://localhost:8080/pipeline/add", data, {
 				withCredentials: true,
@@ -143,11 +141,6 @@ export default function AddJobListingButton() {
 			<Dialog open={open} onClose={() => setOpen(false)}>
 				<DialogTitle>Add Job</DialogTitle>
 				<DialogContent sx={{ overflowY: "visible", width: "500px" }}>
-					{isError && (
-						<Typography variant="body2" sx={{ fontStyle: "italic", m: 2 }}>
-							Error saving job. Try again or report bug.
-						</Typography>
-					)}
 					<FormProvider {...formMethods}>
 						<Grid container direction="column" rowGap={2}>
 							<JobStatusDropdown />
@@ -187,29 +180,12 @@ export default function AddJobListingButton() {
 						</Grid>
 					</FormProvider>
 				</DialogContent>
-				<DialogActions>
-					<LoadingButton
-						size="small"
-						variant="contained"
-						startIcon={<DeleteIcon />}
-						onClick={onDiscard}
-						loading={isPending}
-						loadingPosition="start"
-					>
-						<span>Discard</span>
-					</LoadingButton>
-					<LoadingButton
-						size="small"
-						variant="contained"
-						startIcon={<SaveIcon />}
-						type="submit"
-						onClick={handleSubmit(onSubmit)}
-						loading={isPending}
-						loadingPosition="start"
-					>
-						<span>Save Job</span>
-					</LoadingButton>
-				</DialogActions>
+				<FormSubmitButtons
+					onDiscard={onDiscard}
+					onSubmit={handleSubmit(onSubmit)}
+					isPending={isPending}
+					isError={isError}
+				/>
 			</Dialog>
 		</>
 	);

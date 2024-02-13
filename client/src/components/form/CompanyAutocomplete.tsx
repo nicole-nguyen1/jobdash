@@ -26,12 +26,13 @@ export default function CompanyAutocomplete({
 	company = null,
 	setCompany = null,
 }: Props) {
-	const { register } = useFormContext();
+	const { register, setValue } = useFormContext();
 	const [autoCompleteValue, setAutoCompleteValue] = useState<Company | null>(
 		company ?? null
 	);
 	const [inputValue, setInputValue] = useState("");
 	const [options, setOptions] = useState<Company[]>([]);
+	const [isInitializing, setIsInitializing] = useState<boolean>(false);
 
 	const loadOptions = async (input: string) => {
 		if (input.length === 0) {
@@ -56,7 +57,10 @@ export default function CompanyAutocomplete({
 
 	useEffect(() => {
 		if (company != null) {
+			console.log("inside use effect in autocomplete");
 			setAutoCompleteValue(company);
+			setValue("company", company);
+			setIsInitializing(true);
 		}
 	}, [company]);
 
@@ -80,8 +84,16 @@ export default function CompanyAutocomplete({
 				setAutoCompleteValue(newValue);
 			}}
 			onInputChange={(_event, newInputValue) => {
-				setCompany && setCompany(null);
-				setInputValue(newInputValue);
+				console.log({ isInitializing, company, setCompany, newInputValue });
+				if (isInitializing || setCompany == null) {
+					console.log("inside initializing");
+					setInputValue(newInputValue);
+					setIsInitializing(false);
+				} else {
+					console.log("inside not initializing");
+					setCompany && setCompany(null);
+					setInputValue(newInputValue);
+				}
 			}}
 			renderInput={(params) => (
 				<TextField
@@ -103,7 +115,13 @@ export default function CompanyAutocomplete({
 							) : null,
 					}}
 					inputProps={params.inputProps}
-					{...register("company", { setValueAs: (v) => autoCompleteValue })}
+					{...register("company", {
+						setValueAs: (v) => {
+							console.log("setting value as");
+							console.log({ autoCompleteValue });
+							return autoCompleteValue ?? company;
+						},
+					})}
 				/>
 			)}
 			renderOption={(props, option) => {

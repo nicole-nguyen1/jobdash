@@ -36,7 +36,7 @@ export default function JobCard({ job }: Props) {
 			<Box
 				key={job.id}
 				sx={{
-					backgroundColor: job.cardColor,
+					backgroundColor: job.cardColor ?? job.companyColor,
 					padding: "8px",
 					borderRadius: "4px",
 					marginTop: "8px",

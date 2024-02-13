@@ -10,7 +10,7 @@ type Props = {
 
 export default function PipelineStage({ stage, jobs }: Props) {
 	return (
-		<Grid item key={stage} xs={2}>
+		<Grid item key={stage} xs={2} minWidth={"250px"}>
 			<Box
 				sx={{
 					backgroundColor: (theme) =>
