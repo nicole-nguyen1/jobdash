@@ -57,7 +57,7 @@ def login():
   event = 'USER_LOGIN_FAILED'
   if (user is not None):
     # check password
-    check_pw = bcrypt.checkpw(password.encode('utf-8'), bytes(user[1]))
+    check_pw = bcrypt.checkpw(password.encode('utf-8'), bytes(user['password']))
     if (check_pw is True):
       session["username"] = email
       event = 'USER_LOGIN_SUCCESS'

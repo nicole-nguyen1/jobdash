@@ -57,7 +57,6 @@ export default function CompanyAutocomplete({
 
 	useEffect(() => {
 		if (company != null) {
-			console.log("inside use effect in autocomplete");
 			setAutoCompleteValue(company);
 			setValue("company", company);
 			setIsInitializing(true);
@@ -84,13 +83,10 @@ export default function CompanyAutocomplete({
 				setAutoCompleteValue(newValue);
 			}}
 			onInputChange={(_event, newInputValue) => {
-				console.log({ isInitializing, company, setCompany, newInputValue });
 				if (isInitializing || setCompany == null) {
-					console.log("inside initializing");
 					setInputValue(newInputValue);
 					setIsInitializing(false);
 				} else {
-					console.log("inside not initializing");
 					setCompany && setCompany(null);
 					setInputValue(newInputValue);
 				}
@@ -116,11 +112,7 @@ export default function CompanyAutocomplete({
 					}}
 					inputProps={params.inputProps}
 					{...register("company", {
-						setValueAs: (v) => {
-							console.log("setting value as");
-							console.log({ autoCompleteValue });
-							return autoCompleteValue ?? company;
-						},
+						setValueAs: (v) => autoCompleteValue ?? company,
 					})}
 				/>
 			)}

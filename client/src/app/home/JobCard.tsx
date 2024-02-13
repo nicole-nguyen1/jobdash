@@ -36,7 +36,7 @@ export default function JobCard({ job }: Props) {
 			<Box
 				key={job.id}
 				sx={{
-					backgroundColor: job.cardColor ?? job.companyColor,
+					backgroundColor: job.card_color ?? job.company_color,
 					padding: "8px",
 					borderRadius: "4px",
 					marginTop: "8px",
@@ -61,7 +61,7 @@ export default function JobCard({ job }: Props) {
 					>
 						<Grid item sx={{ mr: 2 }} xs={1}>
 							<Avatar
-								src={`https://logo.clearbit.com/${job.companyURL}`}
+								src={`https://logo.clearbit.com/${job.company_url}`}
 								sx={{
 									border: "2px solid white",
 									width: 24,
@@ -74,7 +74,7 @@ export default function JobCard({ job }: Props) {
 							<Typography variant="body2" sx={{ fontWeight: "bold" }}>
 								{job.title}
 							</Typography>
-							<Typography variant="subtitle2">{job.companyName}</Typography>
+							<Typography variant="subtitle2">{job.company_name}</Typography>
 						</Grid>
 					</Grid>
 					<Grid container item xs={1} direction="column">
@@ -83,7 +83,7 @@ export default function JobCard({ job }: Props) {
 						</Grid>
 						<Grid item>
 							<Typography variant="caption">
-								{moment(job.lastUpdated).fromNow(true)}
+								{moment(job.latest_update).fromNow(true)}
 							</Typography>
 						</Grid>
 					</Grid>

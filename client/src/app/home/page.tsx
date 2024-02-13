@@ -1,5 +1,6 @@
 "use client";
 
+import { WorkingModel } from "@/components/form/WorkingModelDropdown";
 import { Container, Grid } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -9,15 +10,19 @@ import { pipelineStatusConfig } from "./pipelineStatusTypes";
 export type JobsPayload = {
 	id: string;
 	title: string;
-	companyName: string;
-	currStatus: string;
+	company_name: string;
+	company_color: string;
+	company_url: string;
+	card_color: string | null;
+	curr_status: string;
 	substatus: string;
-	companyColor: string;
-	cardColor: string | null;
-	companyURL: string;
-	timelineID: string;
-	lastUpdated: string;
+	timeline_id: string;
+	latest_update: string;
 	url: string;
+	location: string | null;
+	salary: number | null;
+	working_model: WorkingModel | null;
+	description: string | null;
 };
 
 export default function Home() {
@@ -49,7 +54,7 @@ export default function Home() {
 						key={stage}
 						stage={stage}
 						jobs={(data ?? []).filter(
-							(job: JobsPayload) => job.currStatus === stage
+							(job: JobsPayload) => job.curr_status === stage
 						)}
 					/>
 				))}

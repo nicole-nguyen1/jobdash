@@ -8,7 +8,7 @@ export enum WorkingModel {
 }
 
 type Props = {
-	loadedModel?: string;
+	loadedModel?: WorkingModel | null;
 };
 
 export default function WorkingModelDropdown({ loadedModel }: Props) {

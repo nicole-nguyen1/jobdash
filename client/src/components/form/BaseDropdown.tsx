@@ -22,7 +22,7 @@ const MenuProps = {
 type Props = {
 	fieldName: string;
 	items: React.ReactNode;
-	preloadedValue?: string;
+	preloadedValue?: string | null;
 };
 
 export default function BaseDropdown({

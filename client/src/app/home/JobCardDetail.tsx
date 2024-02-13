@@ -72,24 +72,26 @@ export default function JobCardDetail({ job, open, setOpen }: Props) {
 			company: company != null ? company : {},
 			jobTitle: job.title,
 			url: job.url ?? "",
-			color: job.cardColor ?? job.companyColor,
+			color: job.card_color ?? job.company_color,
+			location: job.location ?? "",
+			salary: job.salary ?? undefined,
+			description: job.description ?? "",
+			workingModel: job.working_model ?? undefined,
 		},
 	});
 	const { register, handleSubmit, reset, setValue } = formMethods;
 
 	useEffect(() => {
-		console.log("inside use effect job card detail");
 		axios
 			.get("https://company.clearbit.com/v1/domains/find", {
 				headers: {
 					Authorization: "Bearer " + process.env.NEXT_PUBLIC_CLEARBIT_API_KEY,
 				},
 				params: {
-					name: job.companyName,
+					name: job.company_name,
 				},
 			})
 			.then((res) => {
-				console.log("resolved");
 				setCompany(res.data);
 				setValue("company", res.data);
 			});
@@ -113,7 +115,6 @@ export default function JobCardDetail({ job, open, setOpen }: Props) {
 	});
 
 	const onSubmit = async (data: FormData) => {
-		console.log(data);
 		const {
 			company,
 			jobTitle,
@@ -130,14 +131,13 @@ export default function JobCardDetail({ job, open, setOpen }: Props) {
 			companyURL: company.domain,
 			jobTitle,
 			url: url.length > 0 ? url : null,
-			cardColor: color === job.companyColor ? null : color,
+			cardColor: color === job.company_color ? null : color,
 			salary: isNaN(salary) ? null : salary,
 			location: location.length > 0 ? location : null,
 			workingModel: workingModel.length > 0 ? workingModel : null,
 			description:
 				description != null && description.length > 0 ? description : null,
 		};
-		console.log({ requestBody });
 		mutate(requestBody);
 	};
 
@@ -153,7 +153,7 @@ export default function JobCardDetail({ job, open, setOpen }: Props) {
 				>
 					<Grid item sx={{ mr: 2 }} xs={1}>
 						<Avatar
-							src={`https://logo.clearbit.com/${job.companyURL}`}
+							src={`https://logo.clearbit.com/${job.company_url}`}
 							sx={{
 								border: "2px solid white",
 								width: 48,
@@ -166,7 +166,7 @@ export default function JobCardDetail({ job, open, setOpen }: Props) {
 						<Typography variant="h5" sx={{ fontWeight: "bold" }}>
 							{job.title}
 						</Typography>
-						<Typography variant="body1">{job.companyName}</Typography>
+						<Typography variant="body1">{job.company_name}</Typography>
 					</Grid>
 				</Grid>
 			</DialogTitle>
@@ -207,12 +207,13 @@ export default function JobCardDetail({ job, open, setOpen }: Props) {
 						>
 							<Grid item xs={8}>
 								<JobStatusDropdown
-									loadedStatus={`${job.currStatus}-${job.substatus}`}
+									loadedStatus={`${job.curr_status}-${job.substatus}`}
 								/>
 							</Grid>
 							<Grid item xs={4}>
 								<CardColorPicker
-									currCardColor={job.cardColor ?? job.companyColor}
+									companyColor={job.company_color}
+									currCardColor={job.card_color ?? job.company_color}
 									textFieldProps={formFieldProps}
 								/>
 							</Grid>
@@ -249,7 +250,7 @@ export default function JobCardDetail({ job, open, setOpen }: Props) {
 								/>
 							</Grid>
 							<Grid item xs={4}>
-								<WorkingModelDropdown />
+								<WorkingModelDropdown loadedModel={job.working_model} />
 							</Grid>
 						</Grid>
 						<Typography variant="caption" sx={{ ml: 1 }}>

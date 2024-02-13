@@ -2,6 +2,7 @@ from auth.utils import find_user
 from flask import jsonify, request, session
 from markupsafe import escape
 from pipeline import bp
+from pipeline.utils import convertToStringOrNull
 
 
 @bp.route("/add", methods=['POST'])
@@ -12,7 +13,7 @@ def add_job():
   if (user is None):
     return jsonify({}), 401
 
-  user_id = user[0]
+  user_id = user['id']
   status = data['status']
   substatus = data['substatus']
   date = data['date']
@@ -80,10 +81,10 @@ def archive_job():
     cursor.execute(update_query.format(safe_job_id))
     job = cursor.fetchone()
 
-    if (job[0] is None or job[1] is False):
+    if (job['id'] is None or job['is_archived'] is False):
       event = 'JOB_NOT_ARCHIVED'
       event_code = 500
-    elif (job[0] is not None and job[1] is True):
+    elif (job['id'] is not None and job['is_archived'] is True):
       conn.commit()
       event = 'JOB_ARCHIVED'
       event_code = 200
@@ -152,12 +153,12 @@ def update_job():
       SET company_name = \'{0}\',
           company_url = \'{1}\',
           title = \'{2}\',
-          url = \'{3}\',
-          card_color = \'{4}\',
-          salary = \'{5}\',
-          location = \'{6}\',
-          working_model = \'{7}\',
-          description = \'{8}\'
+          url = {3},
+          card_color = {4},
+          salary = {5},
+          location = {6},
+          working_model = {7},
+          description = {8}
       WHERE id = \'{9}\'
       RETURNING *
     """
@@ -166,21 +167,21 @@ def update_job():
       company_name,
       company_url,
       title,
-      url,
-      card_color,
+      convertToStringOrNull(url),
+      convertToStringOrNull(card_color),
       salary,
-      location,
-      working_model,
-      description,
+      convertToStringOrNull(location),
+      convertToStringOrNull(working_model),
+      convertToStringOrNull(description),
       safe_job_id
     ))
     job = cursor.fetchone()
     print(job)
 
-    if (job[0] is None):
+    if (job is None):
       event = 'JOB_NOT_UPDATED'
       event_code = 500
-    elif (job[0] is not None):
+    elif (job is not None):
       conn.commit()
       event = 'JOB_UPDATED'
       event_code = 200
