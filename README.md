@@ -17,9 +17,9 @@ Job search tracking and insights web app
 This is a personal project that I have been working on in between employment. The purpose of this was to familiarize myself with other industry-standard technologies such as TypeScript, Next.js, Python, Flask, TanStack Query (fka React Query), React Hook Forms, Moment, and Material UI. While working at Meta, I used a very proprietary tech stack outside of React and GraphQL, so I took this chance to explore other languages, frameworks, and libraries. 
 
 # Screenshots of current functionality
-![The main page - job pipeline kanban board](https://github.com/nicole-nguyen1/jobdash/assets/26987953/c2132691-033b-4cf8-88e2-168556662330)
+![The main page - job pipeline dashboard](https://github.com/nicole-nguyen1/jobdash/assets/26987953/d591ef26-a32b-4515-a39f-d44515bc80d5)
 
-![Job details with timeline](https://github.com/nicole-nguyen1/jobdash/assets/26987953/12fa4c8b-9b54-4aba-bf34-e5bd986de1b7)
+![Job details with timeline](https://github.com/nicole-nguyen1/jobdash/assets/26987953/a76c3a74-cd3d-428e-bf5b-7ec6ef6578c3)
 
 # Current features
 - Authentication flow: server-side HTTP-only cookie for session management, stored in Redis
