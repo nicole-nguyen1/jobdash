@@ -29,7 +29,8 @@ export type JobDetailFormData = {
 	company: Company;
 	jobTitle: string;
 	url: string;
-	salary: number;
+	minSalary: number;
+	maxSalary: number;
 	location: string;
 	workingModel: WorkingModel;
 	color: string;
@@ -144,7 +145,7 @@ export default function JobCardDetailContent({
 						spacing={2}
 						alignItems="center"
 					>
-						<Grid item xs={4}>
+						<Grid item xs={3}>
 							<TextField
 								id="location"
 								label="Location"
@@ -152,16 +153,25 @@ export default function JobCardDetailContent({
 								{...register("location")}
 							/>
 						</Grid>
-						<Grid item xs={4}>
+						<Grid item xs={3}>
 							<TextField
-								id="salary"
-								label="Salary"
+								id="minSalary"
+								label="Salary Minimum"
 								type="number"
 								{...formFieldProps}
-								{...register("salary", { valueAsNumber: true })}
+								{...register("minSalary", { valueAsNumber: true })}
 							/>
 						</Grid>
-						<Grid item xs={4}>
+						<Grid item xs={3}>
+							<TextField
+								id="maxSalary"
+								label="Salary Maximum"
+								type="number"
+								{...formFieldProps}
+								{...register("maxSalary", { valueAsNumber: true })}
+							/>
+						</Grid>
+						<Grid item xs={3}>
 							<WorkingModelDropdown loadedModel={job.working_model} />
 						</Grid>
 					</Grid>

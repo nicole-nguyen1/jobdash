@@ -19,7 +19,8 @@ type RequestBody = {
 	url: string | null;
 	cardColor: string | null;
 	companyURL: string;
-	salary: number | null;
+	minSalary: number | null;
+	maxSalary: number | null;
 	location: string | null;
 	workingModel: WorkingModel | null;
 	description: string | null;
@@ -41,7 +42,8 @@ export default function JobCardDetail({ job, open, setOpen }: Props) {
 			url: job.url ?? "",
 			color: job.card_color ?? job.company_color,
 			location: job.location ?? "",
-			salary: job.salary ?? undefined,
+			minSalary: job.min_salary ?? undefined,
+			maxSalary: job.max_salary ?? undefined,
 			description: job.description ?? "",
 			workingModel: job.working_model ?? undefined,
 		},
@@ -86,7 +88,8 @@ export default function JobCardDetail({ job, open, setOpen }: Props) {
 			jobTitle,
 			url,
 			color,
-			salary,
+			minSalary,
+			maxSalary,
 			location,
 			workingModel,
 			description,
@@ -98,7 +101,8 @@ export default function JobCardDetail({ job, open, setOpen }: Props) {
 			jobTitle,
 			url: url.length > 0 ? url : null,
 			cardColor: color === job.company_color ? null : color,
-			salary: isNaN(salary) ? null : salary,
+			minSalary: isNaN(minSalary) ? null : minSalary,
+			maxSalary: isNaN(maxSalary) ? null : maxSalary,
 			location: location.length > 0 ? location : null,
 			workingModel: workingModel.length > 0 ? workingModel : null,
 			description:
@@ -115,7 +119,7 @@ export default function JobCardDetail({ job, open, setOpen }: Props) {
 				"& .MuiDialog-container": {
 					"& .MuiPaper-root": {
 						width: "100%",
-						maxWidth: "900px",
+						maxWidth: "1000px",
 					},
 				},
 			}}

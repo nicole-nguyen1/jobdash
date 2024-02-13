@@ -29,7 +29,7 @@ export default function JobCardTimeline({ timelineID }: Props) {
 			container
 			item
 			xs={4}
-			sx={{ padding: "16px 16px 16px 0" }}
+			sx={{ padding: "16px 20px 16px 0" }}
 			direction="column"
 		>
 			<Grid item sx={{ textAlign: "center" }}>
