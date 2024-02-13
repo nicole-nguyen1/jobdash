@@ -128,7 +128,70 @@ def delete_job():
 
   return jsonify({'event': event}, event_code)
 
+@bp.route('/update', methods=['POST'])
+def update_job():
+  data = request.get_json()
+  job_id = request.args.get('job_id')
+  (user, cursor, conn) = find_user(['id'], False)
 
+  if (user is not None):
+    safe_job_id = escape(job_id)
+
+    company_name = data['company']
+    company_url = data['companyURL']
+    title = data['jobTitle']
+    url = data['url']
+    card_color = data['cardColor']
+    salary = data['salary']
+    location = data['location']
+    working_model = data['workingModel']
+    description = data['description']
+
+    update_query = """
+      UPDATE jobs
+      SET company_name = \'{0}\',
+          company_url = \'{1}\',
+          title = \'{2}\',
+          url = \'{3}\',
+          card_color = \'{4}\',
+          salary = \'{5}\',
+          location = \'{6}\',
+          working_model = \'{7}\',
+          description = \'{8}\'
+      WHERE id = \'{9}\'
+      RETURNING *
+    """
+
+    cursor.execute(update_query.format(
+      company_name,
+      company_url,
+      title,
+      url,
+      card_color,
+      salary,
+      location,
+      working_model,
+      description,
+      safe_job_id
+    ))
+    job = cursor.fetchone()
+    print(job)
+
+    if (job[0] is None):
+      event = 'JOB_NOT_UPDATED'
+      event_code = 500
+    elif (job[0] is not None):
+      conn.commit()
+      event = 'JOB_UPDATED'
+      event_code = 200
+  else:
+    event = 'UNAUTHORIZED_TO_UPDATE'
+    event_code = 401
+
+  cursor.close()
+  conn.close()
+
+  return jsonify({'event': event}, event_code)
 
 
 

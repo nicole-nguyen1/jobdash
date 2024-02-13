@@ -12,9 +12,9 @@ export default function CardColorPicker({
 	currCardColor,
 	textFieldProps,
 }: Props) {
-	const [value, setValue] = useState<string | null>(null);
+	const [color, setColor] = useState<string | null>(null);
 	const [anchorEl, setAnchorEl] = useState<null | HTMLInputElement>(null);
-	const { register } = useFormContext();
+	const { register, setValue } = useFormContext();
 
 	const handleClick = (event: React.MouseEvent<HTMLInputElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -25,6 +25,7 @@ export default function CardColorPicker({
 	};
 
 	const open = Boolean(anchorEl);
+	const loadedColor = color == null ? currCardColor : color;
 
 	return (
 		<>
@@ -34,7 +35,8 @@ export default function CardColorPicker({
 				onClick={handleClick}
 				InputProps={{
 					style: {
-						backgroundColor: value == null ? currCardColor : value,
+						color: loadedColor,
+						backgroundColor: loadedColor,
 					},
 				}}
 				{...register("color")}
@@ -56,15 +58,19 @@ export default function CardColorPicker({
 				slotProps={{ paper: { sx: { padding: "16px" } } }}
 			>
 				<CirclePicker
-					color={value == null ? currCardColor : value}
+					color={loadedColor}
 					onChange={(c) => {
-						setValue(c.hex);
+						setColor(c.hex);
+						setValue("color", c.hex);
 					}}
 				/>
 				<Button
 					variant="contained"
 					sx={{ mt: 2 }}
-					onClick={() => setValue(currCardColor)}
+					onClick={() => {
+						setColor(currCardColor);
+						setValue("color", currCardColor);
+					}}
 				>
 					Reset to company color
 				</Button>

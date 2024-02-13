@@ -1,7 +1,9 @@
+import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const toolbarOptions = [
 	["bold", "italic", "underline"], // toggled buttons

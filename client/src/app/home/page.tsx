@@ -12,10 +12,12 @@ export type JobsPayload = {
 	companyName: string;
 	currStatus: string;
 	substatus: string;
-	cardColor: string;
+	companyColor: string;
+	cardColor: string | null;
 	companyURL: string;
 	timelineID: string;
 	lastUpdated: string;
+	url: string;
 };
 
 export default function Home() {

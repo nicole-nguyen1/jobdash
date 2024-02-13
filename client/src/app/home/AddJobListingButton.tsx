@@ -10,7 +10,6 @@ import {
 	Grid,
 	TextField,
 	TextFieldProps,
-	Typography,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
@@ -86,7 +85,7 @@ export default function AddJobListingButton() {
 		setOpen(false);
 	};
 
-	const { mutate, isPending, isIdle, isSuccess, isError } = useMutation({
+	const { mutate, isPending, isSuccess, isError } = useMutation({
 		mutationFn: (data: RequestBody) =>
 			axios.post("http://localhost:8080/pipeline/add", data, {
 				withCredentials: true,
@@ -142,11 +141,6 @@ export default function AddJobListingButton() {
 			<Dialog open={open} onClose={() => setOpen(false)}>
 				<DialogTitle>Add Job</DialogTitle>
 				<DialogContent sx={{ overflowY: "visible", width: "500px" }}>
-					{isError && (
-						<Typography variant="body2" sx={{ fontStyle: "italic", m: 2 }}>
-							Error saving job. Try again or report bug.
-						</Typography>
-					)}
 					<FormProvider {...formMethods}>
 						<Grid container direction="column" rowGap={2}>
 							<JobStatusDropdown />
@@ -190,6 +184,7 @@ export default function AddJobListingButton() {
 					onDiscard={onDiscard}
 					onSubmit={handleSubmit(onSubmit)}
 					isPending={isPending}
+					isError={isError}
 				/>
 			</Dialog>
 		</>
