@@ -5,17 +5,19 @@ import { DialogActions, Typography } from "@mui/material";
 
 type Props = {
 	isPending: boolean;
-	onDiscard: () => void;
+	onCancel: () => void;
 	onSubmit: () => void;
 	isError: boolean;
 	isSuccess?: boolean;
+	onDelete?: () => void;
 };
 
 export default function FormSubmitButtons({
 	isPending,
-	onDiscard,
+	onCancel,
 	onSubmit,
 	isError,
+	onDelete,
 	isSuccess = false,
 }: Props) {
 	return (
@@ -35,14 +37,24 @@ export default function FormSubmitButtons({
 			)}
 			<LoadingButton
 				size="small"
-				variant="contained"
-				startIcon={<DeleteIcon />}
-				onClick={onDiscard}
+				variant="outlined"
+				onClick={onCancel}
 				loading={isPending}
-				loadingPosition="start"
 			>
-				<span>Discard</span>
+				<span>Cancel</span>
 			</LoadingButton>
+			{onDelete != null && (
+				<LoadingButton
+					size="small"
+					variant="contained"
+					startIcon={<DeleteIcon />}
+					onClick={onDelete}
+					loading={isPending}
+					loadingPosition="start"
+				>
+					<span>Delete</span>
+				</LoadingButton>
+			)}
 			<LoadingButton
 				size="small"
 				variant="contained"
@@ -52,7 +64,7 @@ export default function FormSubmitButtons({
 				loading={isPending}
 				loadingPosition="start"
 			>
-				<span>Save Job</span>
+				<span>Save</span>
 			</LoadingButton>
 		</DialogActions>
 	);

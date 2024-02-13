@@ -80,7 +80,7 @@ export default function AddJobListingButton() {
 	const formMethods = useForm<FormData>();
 	const { register, handleSubmit, reset } = formMethods;
 
-	const onDiscard = () => {
+	const onCancel = () => {
 		reset();
 		setOpen(false);
 	};
@@ -104,7 +104,7 @@ export default function AddJobListingButton() {
 			company: company.name,
 			jobTitle,
 			url: url.length > 0 ? url : null,
-			date: date.format("YYYY-MM-DD"),
+			date: date.utc().format("YYYY-MM-DD"),
 			status: statuses[0],
 			substatus: statuses.length > 1 ? statuses[1] : null,
 			companyColor: companyLogoColor,
@@ -181,7 +181,7 @@ export default function AddJobListingButton() {
 					</FormProvider>
 				</DialogContent>
 				<FormSubmitButtons
-					onDiscard={onDiscard}
+					onCancel={onCancel}
 					onSubmit={handleSubmit(onSubmit)}
 					isPending={isPending}
 					isError={isError}

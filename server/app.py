@@ -8,6 +8,7 @@ from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_session import Session
 from pipeline import bp as pipeline_bp
+from timeline import bp as timeline_bp
 
 load_dotenv('../database/.env')
 
@@ -31,6 +32,7 @@ server_session = Session(app)
 # blueprints
 app.register_blueprint(auth_bp)
 app.register_blueprint(pipeline_bp)
+app.register_blueprint(timeline_bp)
 
 # run app in dev
 if __name__ == "__main__":

@@ -176,7 +176,6 @@ def update_job():
       safe_job_id
     ))
     job = cursor.fetchone()
-    print(job)
 
     if (job is None):
       event = 'JOB_NOT_UPDATED'
