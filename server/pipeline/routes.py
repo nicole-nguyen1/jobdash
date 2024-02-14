@@ -2,6 +2,7 @@ from auth.utils import find_user
 from flask import jsonify, request, session
 from markupsafe import escape
 from pipeline import bp
+from pipeline.api.ats_factory import ATSFactory
 from pipeline.utils import convertToIntOrNull, convertToStringOrNull
 
 
@@ -17,24 +18,39 @@ def add_job():
   status = data['status']
   substatus = data['substatus']
   date = data['date']
-  title = data['jobTitle']
-  company_name = data['company']
-  url = data['url']
-  company_color = data['companyColor']
-  date = data['date']
-  company_url = data['companyURL']
+  url = data.get('url')
+  title = data.get('jobTitle')
+  company_name = data.get('company')
+  company_color = data.get('companyColor')
+  company_url = data.get('companyURL')
+  location = None
+  working_model = None
+  description = None
+  min_salary = None
+  max_salary = None
+
+  if (url is not None):
+    ImporterType = ATSFactory('GREENHOUSE')
+    Importer = ImporterType(url)
+    fields = Importer.import_from_url()
+    company_name = fields.company_name
+    title = fields.title
+    location = fields.location
+    description = fields.description
+    min_salary = fields.min_salary
+    max_salary = fields.max_salary
 
   # create new timeline first
   insert_query = """
-    WITH query as (
-        SELECT id as userid from users
-        WHERE id = \'{0}\'
-    )
-    INSERT into timelines (
-        user_id
-    ) SELECT userid from query
-    RETURNING id
-  """
+  WITH query as (
+      SELECT id as userid from users
+      WHERE id = \'{0}\'
+  )
+  INSERT into timelines (
+      user_id
+  ) SELECT userid from query
+  RETURNING id
+"""
   cursor.execute(insert_query.format(user_id))
   timeline_id = cursor.fetchone()
   if (timeline_id is None):
@@ -43,16 +59,57 @@ def add_job():
   # create timeline event for job
   cursor.execute('INSERT INTO timeline_events (timeline_id, date, status, substatus) '
                  'VALUES (%s, %s, %s, %s) RETURNING id',
-                 (timeline_id[0], date, status, substatus))
+                 (timeline_id['id'], date, status, substatus))
   event = cursor.fetchone()
   if (event is None):
     return jsonify({'event': 'TIMELINE_EVENT_CREATION_FAILED'})
 
-  cursor.execute('INSERT INTO jobs (user_id, timeline_id, curr_status, title, company_name, url, company_color, company_url) '
-                 'VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING id',
-                 (user_id, timeline_id[0], status, title, company_name, url, company_color, company_url))
-  job_id = cursor.fetchone()
+  jobs_query = """
+    INSERT INTO jobs
+      (user_id,
+      timeline_id,
+      curr_status,
+      url,
+      title,
+      company_name,
+      company_color,
+      company_url,
+      location,
+      working_model,
+      description,
+      min_salary,
+      max_salary)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    RETURNING *
+  """
 
+  print(user_id,
+        timeline_id['id'],
+        status,
+        url,
+        title,
+        company_name,
+        company_color,
+        company_url,
+        location,
+        working_model,
+        description,
+        min_salary,
+        max_salary)
+  cursor.execute(jobs_query, (user_id,
+                              timeline_id['id'],
+                              status,
+                              url,
+                              title,
+                              company_name,
+                              company_color,
+                              company_url,
+                              location,
+                              working_model,
+                              description,
+                              min_salary,
+                              max_salary))
+  job_id = cursor.fetchone()
   conn.commit()
 
   cursor.close()
@@ -62,6 +119,7 @@ def add_job():
     return jsonify({'event': 'JOB_CREATION_FAILED'})
   else:
     return jsonify({'event': 'JOB_CREATION_SUCCESS'})
+
 
 @bp.route('/archive', methods=['POST'])
 def archive_job():
@@ -129,6 +187,7 @@ def delete_job():
 
   return jsonify({'event': event}, event_code)
 
+
 @bp.route('/update', methods=['POST'])
 def update_job():
   data = request.get_json()
@@ -166,17 +225,17 @@ def update_job():
     """
 
     cursor.execute(update_query.format(
-      company_name,
-      company_url,
-      title,
-      convertToStringOrNull(url),
-      convertToStringOrNull(card_color),
-      convertToIntOrNull(min_salary),
-      convertToIntOrNull(max_salary),
-      convertToStringOrNull(location),
-      convertToStringOrNull(working_model),
-      convertToStringOrNull(description),
-      safe_job_id
+        company_name,
+        company_url,
+        title,
+        convertToStringOrNull(url),
+        convertToStringOrNull(card_color),
+        convertToIntOrNull(min_salary),
+        convertToIntOrNull(max_salary),
+        convertToStringOrNull(location),
+        convertToStringOrNull(working_model),
+        convertToStringOrNull(description),
+        safe_job_id
     ))
     job = cursor.fetchone()
 
@@ -195,8 +254,3 @@ def update_job():
   conn.close()
 
   return jsonify({'event': event}, event_code)
-
-
-
-
-

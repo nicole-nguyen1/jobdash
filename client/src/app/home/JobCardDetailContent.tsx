@@ -90,7 +90,7 @@ export default function JobCardDetailContent({
 					</Grid>
 				</Grid>
 			</DialogTitle>
-			<DialogContent sx={{ overflowY: "visible" }}>
+			<DialogContent sx={{ overflowY: "auto", maxHeight: "500px" }}>
 				<Grid container direction="column" rowGap={1}>
 					<Grid
 						container
