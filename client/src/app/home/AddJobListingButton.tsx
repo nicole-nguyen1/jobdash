@@ -74,11 +74,9 @@ const colorThief = new ColorThief();
 export default function AddJobListingButton() {
 	const queryClient = useQueryClient();
 	const [open, setOpen] = useState<boolean>(false);
-	const [company, setCompany] = useState<Company | null>(null);
-	const [companies, setCompanies] = useState<any[]>([]);
 	const [companyLogoColor, setCompanyLogoColor] = useState<string | null>(null);
 	const formMethods = useForm<FormData>();
-	const { register, handleSubmit, reset } = formMethods;
+	const { register, handleSubmit, reset, watch } = formMethods;
 
 	const onCancel = () => {
 		reset();
@@ -120,18 +118,21 @@ export default function AddJobListingButton() {
 	}, [isSuccess]);
 
 	useEffect(() => {
-		if (company != null) {
-			const img = new Image();
-			img.crossOrigin = "Anonymous";
-			img.src = company.logo;
+		const subscription = watch((data) => {
+			if (data.company != null) {
+				const img = new Image();
+				img.crossOrigin = "Anonymous";
+				img.src = data.company.logo ?? "";
 
-			if (!img.complete) {
-				img.addEventListener("load", function () {
-					setCompanyLogoColor(rgbToHex(colorThief.getColor(img)));
-				});
+				if (!img.complete) {
+					img.addEventListener("load", function () {
+						setCompanyLogoColor(rgbToHex(colorThief.getColor(img)));
+					});
+				}
 			}
-		}
-	}, [company]);
+		});
+		return () => subscription.unsubscribe();
+	}, [watch]);
 
 	return (
 		<>
