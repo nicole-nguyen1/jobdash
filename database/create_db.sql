@@ -19,7 +19,6 @@ CREATE TABLE "jobs" (
 	"company_name" varchar NOT NULL,
 	"curr_status" varchar NOT NULL,
 	"url" varchar,
-	"salary" varchar,
 	"location" varchar,
 	"working_model" varchar,
 	"description" text,
@@ -28,6 +27,8 @@ CREATE TABLE "jobs" (
 	"timeline_id" uuid NOT NULL,
 	"company_url" varchar,
 	"is_archived" boolean DEFAULT FALSE,
+	"min_salary" integer,
+	"max_salary" integer,
 	CONSTRAINT "jobs_pk" PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
