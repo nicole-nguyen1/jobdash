@@ -6,7 +6,6 @@ import {
 	DialogContent,
 	DialogTitle,
 	Divider,
-	FormControl,
 	Grid,
 	TextField,
 	TextFieldProps,
@@ -19,7 +18,7 @@ import axios from "axios";
 // @ts-ignore
 import ColorThief from "colorthief";
 import { Moment } from "moment";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { DatePickerElement } from "react-hook-form-mui";
 import CompanyAutocomplete, {
@@ -30,21 +29,21 @@ import rgbToHex from "../utils/rgbToHex";
 
 type FormData = {
 	company: Company;
-	jobTitle: string;
-	url: string;
+	jobTitle: string | null;
+	url: string | null;
 	status: string;
 	date: Moment;
 };
 
 type RequestBody = {
-	company: string;
-	jobTitle: string;
-	url: string | null;
+	company?: string;
+	jobTitle?: string;
+	url?: string | null;
 	date: string;
 	status: string;
 	substatus: string | null;
-	companyColor: string | null;
-	companyURL: string;
+	companyColor?: string | null;
+	companyURL?: string;
 };
 
 const formFieldProps: TextFieldProps = {
@@ -74,12 +73,17 @@ const colorThief = new ColorThief();
 export default function AddJobListingButton() {
 	const queryClient = useQueryClient();
 	const [open, setOpen] = useState<boolean>(false);
+	const [companyName, setCompanyName] = useState<string | null>(null);
+	const [fetchedCompany, setFetchedCompany] = useState<Company | null>(null);
 	const [companyLogoColor, setCompanyLogoColor] = useState<string | null>(null);
 	const formMethods = useForm<FormData>();
 	const { register, handleSubmit, reset, watch } = formMethods;
 
 	const onCancel = () => {
-		reset();
+		reset({
+			url: null,
+			jobTitle: null,
+		});
 		setOpen(false);
 	};
 
@@ -98,41 +102,77 @@ export default function AddJobListingButton() {
 		const { company, jobTitle, status, url, date } = data;
 		const statuses = status.split("-");
 
-		const requestBody: RequestBody = {
-			company: company.name,
-			jobTitle,
-			url: url.length > 0 ? url : null,
-			date: date.utc().format("YYYY-MM-DD"),
+		let requestBody: RequestBody = {
+			date: date.utc().format("YYYY-MM-DD") ?? null,
 			status: statuses[0],
 			substatus: statuses.length > 1 ? statuses[1] : null,
+			company: company?.name ?? fetchedCompany?.name,
 			companyColor: companyLogoColor,
-			companyURL: company.domain,
+			companyURL: company?.domain ?? fetchedCompany?.domain,
 		};
+
+		if (url != null && url.length > 0) {
+			requestBody = { ...requestBody, url };
+		} else {
+			requestBody = {
+				...requestBody,
+				jobTitle: jobTitle ?? "",
+			};
+		}
+
+		console.log(requestBody);
 		mutate(requestBody);
 	};
 
 	useEffect(() => {
 		if (isSuccess) {
-			setOpen(false);
+			onCancel();
 		}
 	}, [isSuccess]);
+
+	const setLogoColor = useCallback((logo: string) => {
+		const img = new Image();
+		img.crossOrigin = "Anonymous";
+		img.src = logo;
+
+		if (!img.complete) {
+			img.addEventListener("load", function () {
+				setCompanyLogoColor(rgbToHex(colorThief.getColor(img)));
+			});
+		}
+	}, []);
 
 	useEffect(() => {
 		const subscription = watch((data) => {
 			if (data.company != null) {
-				const img = new Image();
-				img.crossOrigin = "Anonymous";
-				img.src = data.company.logo ?? "";
-
-				if (!img.complete) {
-					img.addEventListener("load", function () {
-						setCompanyLogoColor(rgbToHex(colorThief.getColor(img)));
-					});
-				}
+				setLogoColor(data?.company.logo ?? "");
+			} else if (data.url != null && data.url.length > 0) {
+				const url = new URL(data.url);
+				const splitPath = url.pathname.split("/");
+				const companyName = splitPath[1];
+				setCompanyName(companyName);
 			}
 		});
 		return () => subscription.unsubscribe();
 	}, [watch]);
+
+	useEffect(() => {
+		if (companyName != null) {
+			axios
+				.get("https://company.clearbit.com/v1/domains/find", {
+					headers: {
+						Authorization: "Bearer " + process.env.NEXT_PUBLIC_CLEARBIT_API_KEY,
+					},
+					params: {
+						name: companyName,
+					},
+				})
+				.then((res) => {
+					setFetchedCompany(res.data);
+					setLogoColor(res.data.logo);
+				});
+		}
+	}, [companyName]);
 
 	return (
 		<>
@@ -160,24 +200,22 @@ export default function AddJobListingButton() {
 								/>
 							</LocalizationProvider>
 							<Divider />
-							<FormControl sx={{ width: "100%" }}>
-								<Grid container direction="column" rowGap={1}>
-									<TextField
-										id="url"
-										label="Import from Job Listing URL"
-										{...formFieldProps}
-										{...register("url")}
-									/>
-									<Divider sx={{ padding: "4px" }}>or</Divider>
-									<CompanyAutocomplete />
-									<TextField
-										id="jobTitle"
-										label="Job Title"
-										{...formFieldProps}
-										{...register("jobTitle")}
-									/>
-								</Grid>
-							</FormControl>
+							<Grid container direction="column" rowGap={1}>
+								<TextField
+									id="url"
+									label="Import from Job Listing URL"
+									{...formFieldProps}
+									{...register("url")}
+								/>
+								<Divider sx={{ padding: "4px" }}>or</Divider>
+								<CompanyAutocomplete />
+								<TextField
+									id="jobTitle"
+									label="Job Title"
+									{...formFieldProps}
+									{...register("jobTitle")}
+								/>
+							</Grid>
 						</Grid>
 					</FormProvider>
 				</DialogContent>
