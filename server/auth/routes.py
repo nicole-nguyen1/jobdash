@@ -1,14 +1,14 @@
 import bcrypt
 from auth import bp
+from auth.models import User
 from auth.utils import find_user
 from flask import jsonify, request, session
-
+from ..extensions import db
 
 # home route
 @bp.route("/session", methods=['GET'])
 def home():
-  user = find_user(['id'], True)
-  if (user is None):
+  if (session['username'] is None):
     return jsonify({}), 401
   else:
     return jsonify({}), 200
@@ -16,33 +16,31 @@ def home():
 @bp.route('/signup', methods=['POST'])
 def signup():
   data = request.get_json()
-  first_name = data['firstName']
-  last_name = data['lastName']
+  f_name = data['firstName']
+  l_name = data['lastName']
   email = data['email']
 
   # check if user currently exists
-  (user, cursor, conn) = find_user(['id'], False, email)
-
+  user = find_user(email)
   # if user does not exist, add to db
   if (user is None):
     password = data['password']
     bytes = password.encode('utf-8')
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(bytes, salt)
-
-    cursor.execute('INSERT INTO users (firstname, lastname, email, password) '
-                  'VALUES (%s, %s, %s, %s) RETURNING id',
-                  (first_name, last_name, email, hashed_password,))
-    user = cursor.fetchone()
+    
+    user = User(
+        email = email,
+        first_name = f_name,
+        last_name = l_name,
+        password = hashed_password
+    )
+    db.session.add(user)
+    db.session.commit()
     event = 'USER_CREATED_SUCCESS'
-    session['username'] = email
   else:
     event = 'USER_ALREADY_EXISTS'
 
-  conn.commit()
-
-  cursor.close()
-  conn.close()
   return jsonify({'event': event})
 
 @bp.route('/login', methods=['POST'])
@@ -52,7 +50,7 @@ def login():
   password = data['password']
 
   # find user
-  user = find_user(['id', 'password'], True, email)
+  user = find_user(email)
 
   event = 'USER_LOGIN_FAILED'
   if (user is not None):

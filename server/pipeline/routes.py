@@ -5,7 +5,7 @@ from pipeline import bp
 from pipeline.api.ats_factory import ATSFactory
 from pipeline.utils import convertToIntOrNull, convertToStringOrNull
 
-
+#TODO: Change queries to sqlalchemy queries
 @bp.route("/add", methods=['POST'])
 def add_job():
   data = request.get_json()
